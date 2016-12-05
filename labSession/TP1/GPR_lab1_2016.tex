@@ -1,0 +1,106 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}     % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+% \usepackage{tasks}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+% \usepackage{verbatim}
+
+\usepackage{array}
+\newcolumntype{N}{@{}m{2pt}@{}}
+
+\title{Gaussian Process Regression -- Lab 1}
+\author{Mines Saint-\'Etienne, Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-1cm}
+\hrule
+\vspace{5mm}
+
+\paragraph{}
+For this lab session, your are free to use the language of your choice. In the next session \emph{R} will be strongly recommended since we will be using some specific \emph{R} packages. A reminder of \emph{R} basic commands can be found on my webpage. 
+
+\paragraph{}
+A few good practice when coding:
+\begin{itemize}
+	\item write your code in a script file
+	\item make sure your script file can be executed in a row
+	\item include comments in your code
+	\item do not hesitate to create many script files
+	\item read the error messages!
+\end{itemize}
+
+\paragraph{}
+We recall some usual covariance functions on $\mathds{R} \times \mathds{R}$:\\
+\begin{center}
+\begin{tabular}{rlN}
+		squared exp. & $\displaystyle k(x,y) = \sigma^2 \exp \left(- \frac{(x-y)^2}{2 \theta^2} \right)$ &\\[6mm]
+		Matern 5/2 & $\displaystyle k(x,y) = \sigma^2 \left(1 + \frac{\sqrt{5}|x-y|}{\theta} + \frac{5|x-y|^2}{3 \theta^2} \right) \exp \left(- \frac{\sqrt{5}|x-y|}{\theta} \right)$ &\\[6mm]
+		Matern 3/2 & $\displaystyle k(x,y) = \sigma^2 \left(1 + \frac{\sqrt{3}|x-y|}{\theta} \right) \exp \left(- \frac{\sqrt{3}|x-y|}{\theta} \right)$ &\\[6mm]
+		exponential & $\displaystyle k(x,y) = \sigma^2 \exp \left(- \frac{|x-y|}{\theta} \right)$ &\\[6mm]
+		Brownian & $ \displaystyle k(x,y) = \sigma^2 \min (x,y) $ &\\[6mm]
+		white noise & $ \displaystyle k(x,y) = \sigma^2 \delta_{x,y} $ &\\[6mm]
+		constant & $ \displaystyle k(x,y) = \sigma^2 $ &\\[6mm]
+		linear & $ \displaystyle k(x,y) = \sigma^2 xy $ &\\[6mm]
+		cosine & $ \displaystyle k(x,y) = \sigma^2 \cos \left (\frac{x-y}{\theta} \right) $ &\\[6mm]
+		sinc & $ \displaystyle k(x,y) = \sigma^2 \frac{\theta}{x-y} \sin \left( \frac{x-y}{\theta} \right) $ &\\[6mm]
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Sampling from a GP}
+
+\begin{enumerate}
+	\item For three kernels of your choice, write a function that takes as input the vectors \texttt{x}, \texttt{y} and \texttt{param} and that returns the  matrix with general term $k(x_i,y_j)$.
+	\item Create a grid of 100 points on $[0,1]$ and compute the covariance matrix associated to one of the kernel you wrote previously. How can you simulate Gaussian samples based on this matrix? The function \texttt{mvrnorm()} from package \emph{MASS} can be useful here. 
+	\item Change the kernel and the kernel parameters. What are the effects on the sample paths? Write down your observations.
+	\item Generate a large number of samples and extract the vectors of the samples evaluated at two (or three) points of the input space. Plot the associated cloud of points. What happen if the two input points are close by? what happen if they are far away?
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Gaussian process regression}
+\paragraph{}
+We want to approximate the test function $f:\ x \in [0,1] \rightarrow x + \sin(4 \pi x)$ by a Gaussian process regression model:
+\begin{equation*}
+\begin{split}
+m(x)&=k(x,X) k(X,X)^{-1} Y\\
+c(x,y)&=k(x,y) - k(x,X) k(X,X)^{-1}k(X,y)
+\end{split}
+\end{equation*}
+
+\begin{enumerate}[resume]
+	\item Create a design of experiment $X$ composed of 5 to 20 points in the input space (regularly spaced points for instance) and compute the vector of observations $Y = f(X)$.
+	\item Write two functions \texttt{m} and \texttt{c} that return the conditional mean and covariance. These functions will typically take as inputs the scalar/vector of prediction point(s) \texttt{x}, the DoE vector \texttt{X}, the vector of responses \texttt{Y}, a kernel function \texttt{kern}, and the vector \texttt{param}.
+	\item Draw on the same graph $f(x)$, $m(x)$ and $95\%$ confidence intervals: $m(x) \pm 1.96\sqrt{c(x,x)}$. 
+	\item Change the kernel as well as the values in \texttt{param}. What is the effect of
+	\begin{itemize}
+	 	\item $\sigma^2$ on $m(x)$? Can you prove this result?
+	 	\item $\sigma^2$ on the conditional variance $v(x) = c(x,x)$? Can you prove this result?
+	 	\item $\theta$ on $m(x)$ (try (very) small  and large values)?
+	 	\item $\theta$ on $v(x)$ (try (very) small  and large values)?
+	 \end{itemize}
+	\item Generate samples from the conditional process. 
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Bonus question}
+
+\begin{enumerate}[resume]
+		\item After testing different kernels and various values for $\sigma^2$ and $\theta$, which one would you recommend?
+\end{enumerate}
+
+\end{document} 
