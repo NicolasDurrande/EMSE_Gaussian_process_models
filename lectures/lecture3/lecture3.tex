@@ -213,11 +213,11 @@ P_0 = \left( \frac{1}{\sqrt{2}},-\frac{1}{\sqrt{2}},0,0,0 \right)^t
 \end{equation*}
 Now, 2 situations can be distinguished\\ \vspace{2mm}
 \begin{itemize}
-	\item[(A)] The observations are compatible with model: $P_0^t F = 0$.
+	\item[(A)] The observations are compatible with the model: $P_0^t F = 0$.
 	\begin{itemize}
 		\item the model is appropriate and one observation can be removed without any loss of information.
 	\end{itemize}
-	\item[(B)] The observations \textbf{are not} compatible with model: $P_0^t F \neq 0$.
+	\item[(B)] The obs. \textbf{are not} compatible with the model: $P_0^t F \neq 0$.
 		\begin{itemize}
 			\item the model is not appropriate and it should be modified. For example, observation noise can be added.
 		\end{itemize}
@@ -246,12 +246,15 @@ In order to avoid numerical problems during optimization, one can:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-A few words on the \structure{Complexity} of GPR\\ \vspace{2mm}
+A few words on GPR \textbf{Complexity}\\ \vspace{2mm}
 	\begin{itemize}
-  		\item \alert{Storage footprint:} We have to store the covariance matrix which is $n \times n$.
-  		\item \alert{Complexity:} We have to invert the covariance matrix, which requires is $\mathcal{O}(n^3)$.\\
-  		$\Rightarrow$ This limits the number of observation points is between $1000$ and $10\,000$. \vspace{2mm}
+  		\item \structure{Storage footprint:} We have to store the covariance matrix which is $n \times n$.
+  		\item \structure{Complexity:} We have to invert the covariance matrix, which requires is $\mathcal{O}(n^3)$.\\
 	\end{itemize}
+Storage footprint is often the first limit to be reached.\\
+\vspace{5mm}
+The maximal number of observation points is between $1000$ and $10\,000$.\\
+\vspace{2mm}
 Note that the complexity do not depend on the dimension of the input space!
 \end{frame}
 

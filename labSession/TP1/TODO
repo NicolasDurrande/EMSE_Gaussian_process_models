@@ -1,0 +1,2 @@
+1. Donner aux étudiants un noyau déjà codé, avec pourquoi pas un graphique.
+2. renomer la fonction de covariance conditionelle pour éviter 'c' qui crée un conflit.

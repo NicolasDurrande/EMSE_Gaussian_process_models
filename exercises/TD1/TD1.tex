@@ -1,0 +1,71 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}     % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+
+\usepackage{array}
+\newcolumntype{N}{@{}m{2pt}@{}}
+
+\title{Gaussian Process Regression -- TD 1}
+\author{Mines Saint-\'Etienne, Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-1cm}
+\hrule
+\vspace{5mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Exercise 1}
+
+Let $Z_s$ be a Gaussian process with mean $\mu(x) = x^2$ and kernel
+\begin{equation*}
+k_s(x,y) = \frac{k(x,y)+k(-x,y)+k(x,-y)+k(-x,-y)}{4}
+\end{equation*}
+where $k$ is a symmetric positive semi-definite function. We want to study the properties of the samples from $Z_s$.
+
+\begin{enumerate}[resume]
+		\item Compute $\mathrm{E}[Z_s(x) - Z_s(-x)]$.
+		\item Compute $\mathrm{var}[Z_s(x) - Z_s(-x)]$.
+		\item What can you conclude?
+		\item If you want to approximate a symmetric function $f$ given some observations $f(X)=F$, is there a difference between:
+		\begin{itemize}
+			\item add extra observations $f(-X) = F$ to take the symmetry into account
+			\item use the kernel $k_s$ to take the symmetry into account
+		\end{itemize}
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Exercise 2: (2015/2016 exam)}
+ANOVA kernels are kernels over $\mathds{R}^d \times \mathds{R}^d$ of the form : $ k(x,y) = \prod_{i=1}^d  \big(1+k_i(x_i,y_i) \big)$, where the $k_i$ are symmetric positive semi-definite functions.
+
+\begin{enumerate}
+\item Using the results from the course, show that ANOVA kernels are valid covariance functions.
+\end{enumerate} 
+
+\noindent We now consider costly-to-evaluate function $f: [0,1]^{10} \to \mathds{R}$, a design of experiment $X$ based on 100 points and the set of observations $F$. The knowledge we have about $f$ is that it is a smooth function that is infinitely differentiable. 
+
+\begin{enumerate}[resume]
+\item With such settings, which kernel would you choose and what kind of Gaussian process regression model would you consider (simple Kriging, ordinary Kriging, Universal Kriging).  
+\item Give the expressions of the mean predictor and of the 95\% confidence intervals.  
+\item Show that the mean predictor can be interpreted as a sum of $2^d$ functions with increasing interaction order.
+\item Each term of this decomposition can be interpreted as a Gaussian process conditional distribution. Detail which one and deduce some confidence intervals associated to each sub-model.
+\item According to an expert, the mean value of $f$ is 6 and the interactions of order higher than 2 can be neglected. What changes can you make in the model and in the kernel expression in order to account for these informations ?
+\item We now consider a particular type for the univariate kernels $k_i$ such that $\int_0^1 k_i(s,x) \, ds = 0$ for all $x \in [0,1]$. Can you recover some of the properties of Polynomial Chaos models?
+\item[bonus] Detail how to obtain a kernel $k_i$ such that $\int_0^1 k_i(s,x) \, ds = 0$ using the conditional distribution of a Gaussian process given it has zero integral.
+\end{enumerate} 
+
+\end{document} 
