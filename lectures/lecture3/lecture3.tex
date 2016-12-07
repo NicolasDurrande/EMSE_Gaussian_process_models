@@ -30,7 +30,7 @@
 }
 \makeatother
 
-\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 3/5 \\ \vspace{3mm} \LARGE Kriging with trend and/or noisy observations}{}}
+\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 3/5 \\ \vspace{3mm} \LARGE Tuning Kriging models}{}}
 \author[Mines St-\'Etienne ]{Mines St-\'Etienne -- Majeure Data Science -- 2016/2017}
 \institute{\texorpdfstring{Nicolas Durrande (durrande@emse.fr)}{}}
 \date{\null}
@@ -49,7 +49,7 @@
 \begin{frame}{}
 \vspace{0.75cm}
 \structure{Outline of the lecture:}
-\vspace{0.5cm}
+\vspace{0.3cm}
 \begin{enumerate}
     \item Approximation
     \begin{itemize}
@@ -64,7 +64,12 @@
     \item GPR with trend
     	\begin{itemize}
     		\item Ordinary kriging
-    		\item Universal kriging
+    		\item Universal kriging \vspace{2mm}
+    	\end{itemize}
+    \item Kernel design
+    	\begin{itemize}
+    		\item Making new from old
+    		\item Linear applications
     	\end{itemize}
 \end{enumerate}
 \end{frame}
@@ -480,6 +485,467 @@ It can be compared to simple kriging with known trend
 \end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Making new from old}
+\subsection{}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{}
+% We have seen that it is difficult to prove directly the positive semi-definiteness of a function. \\
+% \begin{block}{}
+% \textbf{For all} $n \in \mathds{N}$,  \textbf{for all} $x_i \in D$,  \textbf{for all} $a_i \in \mathds{R}$ 
+% \begin{equation*}
+% \sum \sum a_i  a_j K(x_i,x_j) \geq 0
+% \end{equation*}
+% \end{block} \ \\ 
+% However, many operations can be applied to a psd function while retaining this property. This is often called \structure{making new from old}.
+% \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\structure{Making new from old:}
+\begin{block}{}
+Kernels can be:
+\begin{itemize}
+  \item Summed together
+  \begin{itemize}
+    \item On the same space $k(x,y) = k_1(x,y) + k_2(x,y)$
+    \item On the tensor space $k(\mathbf{x},\mathbf{y}) = k_1(x_1,y_1) + k_2(x_2,y_2)$
+  \end{itemize} 
+  \item Multiplied together
+  \begin{itemize}
+    \item On the same space $k(x,y) = k_1(x,y) \times k_2(x,y)$
+    \item On the tensor space $k(\mathbf{x},\mathbf{y}) = k_1(x_1,y_1) \times k_2(x_2,y_2)$
+  \end{itemize} 
+  \item Composed with a function
+  \begin{itemize}
+    \item $k(x,y) = k_1(f(x),f(y))$
+  \end{itemize} 
+\end{itemize} 
+\end{block}
+All these operations will preserve the positive definiteness.\\ 
+\vspace{0.2cm}
+\begin{center}
+\alert{How can this be useful?}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Sum of kernels}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over the same space }
+\begin{example}[The Mauna Loa observatory dataset]
+This famous dataset compiles the monthly $CO_2$ concentration in Hawaii since 1958.
+\begin{center}
+\includegraphics[height=4.5cm]{figures/python/CO2-data}
+\end{center}
+Let's try to predict the concentration for the next 20 years.
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over the same space }
+We first consider a squared-exponential kernel: 
+$$ \displaystyle k(x,y) = \sigma^2\exp \left(-\frac{(x-y)^2}{\theta^2} \right)$$
+\begin{center}
+\includegraphics[width=.48\textwidth]{figures/python/CO2-rbfa} \hfill \includegraphics[width=.48\textwidth]{figures/python/CO2-rbfb}
+\end{center}
+\vspace{5mm}
+\begin{block}{}
+\centering
+\alert{The results are terrible!}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over the same space }
+What happen if we sum both kernels?
+\begin{equation*}
+k(x,y) = k_{rbf1}(x,y) + k_{rbf2}(x,y)
+\end{equation*} 
+\pause
+\begin{center}
+\vspace{-8mm} \includegraphics[height=4.5cm]{figures/python/CO2-rbfab}
+\end{center}
+%\vspace{1mm}
+\begin{block}{}
+\centering
+\alert{The model is drastically improved!}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over the same space }
+We can try the following kernel:
+\begin{equation*}
+k(x,y) = \sigma_0^2  x^2 y^2 + k_{rbf1}(x,y) + k_{rbf2}(x,y) + k_{per}(x,y)
+\end{equation*}
+\pause
+\begin{center}
+\vspace{-8mm}  \includegraphics[height=4.5cm]{figures/python/CO2-rbfabpq}
+\end{center}
+\begin{block}{}
+\centering
+\alert{Once again, the model is significantly improved.}
+\end{block}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space [Durrande 2012]}
+\begin{block}{Property}
+\begin{equation*}
+k(\textbf{x},\textbf{y}) = k_1(x_1,y_1) +  k_2(x_2,y_2)
+\end{equation*} is a valid covariance structure.\\
+\begin{columns}[c]
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-sum2-k1}
+\end{column}
+\begin{column}{2mm}
+$+$
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-sum2-k2}
+\end{column}
+\begin{column}{2mm}
+$=$
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-sum2-k12}
+\end{column}
+\end{columns}
+\vspace{4mm}
+\end{block} \ \\
+\structure{Remark:}
+\begin{itemize}
+ \item From a GP point of view, $k$ is the kernel of $Z(\textbf{x}) = Z_1(x_1) + Z_2(x_2)$
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+We can have a look at a few sample paths from $Z$:
+\begin{center}
+\includegraphics[width=3.5cm]{figures/python/newfromold-sum2-traj124} \includegraphics[width=3.5cm]{figures/python/newfromold-sum2-traj121} \includegraphics[width=3.5cm]{figures/python/newfromold-sum2-traj123} % \includegraphics[width=3.5cm]{Figures/newfromold-sum2-traj122} 
+\end{center}
+\qquad \alert{$\Rightarrow$ They are additive (up to a modification)}\\ \ \\
+Tensor Additive kernels are very useful for
+\begin{itemize}
+  \item Approximating additive functions
+  \item Building models over high dimensional inputs spaces
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+We consider the test function $f(x) = \sin( 4 \pi x_1) + \cos( 4 \pi x_2) + 2 x_2$ and a set of 20 observation in $[0,1]^2$ \\ \vspace{5mm}
+\begin{columns}[c]
+\begin{column}{5cm}
+\textbf{Test function}
+\begin{center}
+\includegraphics[height=4cm]{figures/python/newfromold-productvssum2-predt}
+\end{center}
+\end{column}
+\begin{column}{5cm}
+\textbf{Observations}
+\begin{center}
+\includegraphics[height=4cm]{figures/python/newfromold-productvssum2-preddoe}
+\end{center}
+\end{column}
+\end{columns} 
+\vspace{5mm}
+\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+We obtain the following models:\\ \vspace{5mm}
+\begin{columns}[c]
+\begin{column}{5cm}
+\textbf{Gaussian kernel}
+\begin{center}
+Mean predictor
+\includegraphics[height=4cm]{figures/python/newfromold-productvssum2-predp}\\
+RMSE is 1.06
+\end{center}
+\end{column}
+\begin{column}{5cm}
+\textbf{Additive Gaussian kernel}
+\begin{center}
+Mean predictor
+\includegraphics[height=4cm]{figures/python/newfromold-productvssum2-preda}\\
+RMSE is 0.12
+\end{center}
+\end{column}
+\end{columns} 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+\begin{block}{Remarks}%[(continuation)]
+\begin{itemize}
+\item It is straightforward to show that the mean predictor is additive
+ \small
+ \begin{equation*}
+ \begin{split}
+  m(\mathbf{x}) & = (k_1(x,X) + k_2(x,X)) (k(X,X))^{-1} F \\
+  &  = \underbrace{k_1(x_1,X_1) (k(X,X))^{-1} F}_{m_1(x_1)}  + \underbrace{k_2(x_2,X_2) (k(X,X))^{-1} F}_{m_2(x_2)} 
+ \end{split}
+ \end{equation*}
+\alert{ $\Rightarrow$ The model shares the prior behaviour.}
+ \normalsize
+\vspace{5mm}
+ \item The sub-models can be interpreted as GP regression models with observation noise: 
+  \begin{equation*}
+  m_1(x_1) = \E{\ Z_1(x_1)\ |\  Z_1(X_1)+Z_2(X_2) \shorteq F\ }
+ \end{equation*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+\begin{block}{Remark}%[(continuation)]
+\begin{itemize}
+\item The prediction variance has interesting features
+\begin{columns}[c]
+\begin{column}{5cm}
+\begin{center}
+pred. var. with kernel product
+\includegraphics[height=4cm]{figures/python/kernelmodels-predvarprod}
+\end{center}
+\end{column}
+\begin{column}{5cm}
+\begin{center}
+pred. var. with kernel sum
+\includegraphics[height=4cm]{figures/python/kernelmodels-predvar}
+\end{center}
+\end{column}
+\end{columns}
+\end{itemize} 
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sum of kernels over tensor space}
+This property can be used to construct a design of experiment that covers the space with only $cst \times d$ points.
+\begin{center}
+\includegraphics[height=5cm]{figures/python/kernelmodels-predaxe}\\
+Prediction variance
+\end{center}
+\vfill
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Product of kernels}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Product over the same space}
+\begin{block}{Property}
+\begin{equation*}
+k(x,y) = k_1(x,y) \times  k_2(x,y)
+\end{equation*}
+is valid covariance structure.
+\end{block}
+%\vspace{10mm}
+\begin{example}
+We consider the product of a squared exponential with a cosine:
+\begin{columns}[c]
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-pa.pdf}
+\end{column}
+\begin{column}{2mm}
+$\times$
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-pb.pdf}
+\end{column}
+\begin{column}{2mm}
+$=$
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-pab1.pdf}
+\end{column}
+\end{columns}
+\vspace{5mm}
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Product over the tensor space}
+\begin{block}{Property}
+\begin{equation*}
+k(\textbf{x},\textbf{y}) = k_1(x_1,y_1) \times k_2(x_2,y_2)
+\end{equation*}
+is valid covariance structure.
+\end{block}
+%\vspace{10mm}
+\begin{example}
+We multiply 2 squared exponential kernel
+\begin{columns}[c]
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-sum2-k1}
+\end{column}
+\begin{column}{2mm}
+$\times $
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-sum2-k2}
+\end{column}
+\begin{column}{2mm}
+$=$
+\end{column}
+\begin{column}{3cm}
+\includegraphics[width=3cm]{figures/python/newfromold-prod2-k12}
+\end{column}
+\end{columns}
+\vspace{5mm}
+Calculation shows we obtain the usual 2D squared exponential kernel.
+\end{example}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Composition with a function}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Composition with a function}
+\begin{block}{Property}
+Let $k_1$ be a kernel over $D_1 \times D_1$ and $f$ be an arbitrary function $D \rightarrow D_1$, then
+\begin{equation*}
+k(x,y) = k_1(f(x),f(y))
+\end{equation*}
+is a kernel over $D \times D $.\\
+\small
+\textbf{proof}\\
+\begin{equation*}
+\sum \sum a_i  a_j k(x_i,x_j) = \sum \sum a_i a_j k_1(\underbrace{f(x_i)}_{y_i},\underbrace{f(x_j)}_{y_j}) \geq 0 
+\end{equation*}
+\end{block}
+\vspace{5mm}
+\structure{Remarks:}
+\begin{itemize}
+\item $k$ corresponds to the covariance of $Z(x) = Z_1(f(x))$
+\item This can be seen as a (nonlinear) rescaling of the input space
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{example}
+We consider $f(x) = \frac1x$ and a Mat\'ern 3/2 kernel $k_1(x,y) = (1 + |x-y|) e^{-|x-y|}$.\\ \vspace{5mm}
+\textbf{We obtain:}
+\begin{columns}[c]
+\begin{column}{5cm}
+\begin{center}
+Kernel
+\includegraphics[width=4cm]{figures/python/newfromold-compfunc-k}
+\end{center}
+\end{column}
+\begin{column}{5cm}
+\begin{center}
+Sample paths
+\includegraphics[width=4cm]{figures/python/newfromold-compfunc-traj}
+\end{center}
+\end{column}
+\end{columns}
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\structure{All these transformations can be combined!}
+\begin{example}
+$k(x,y) = f(x)f(y)k_1(x,y)$ is a valid kernel.\\
+\vspace{0.5cm}
+This can be illustrated with $f(x) = \frac1x$ and $k_1(x,y) = (1 + |x-y|) e^{-|x-y|}$:\\ 
+\begin{columns}[c]
+\begin{column}{5cm}
+\begin{center}
+Kernel
+\includegraphics[width=4cm]{figures/python/newfromold-prodfunc-k}
+\end{center}
+\end{column}
+\begin{column}{5cm}
+\begin{center}
+Sample paths
+\includegraphics[width=4cm]{figures/python/newfromold-prodfunc-traj}
+\end{center}
+\end{column}
+\end{columns}
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[linear operator]{Effect of a linear operator}
+\subsection{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Effect of a linear operator}
+\begin{block}{Property}
+Let $L$ be a linear operator that can be applied to samples of a process $Z$ {\tiny(such that [...])}. Then
+    \begin{equation*}
+        k(x,y) = L_x(L_y(k(x,y)))
+    \end{equation*}
+\end{block}
+\begin{example}
+  We want to approximate a function $[0,1] \rightarrow \mathds{R}$ that is symmetric with respect to $0.5$.
+We will consider 2 linear operators:
+\begin{equation*}
+ L_1 : f(x) \rightarrow 
+\left\{ 
+\begin{aligned}
+ f(x) \text{\qquad}  & x < 0.5 \\
+ f(1-x) \text{\qquad}   & x \geq 0.5 
+\end{aligned}
+\right.
+\end{equation*}
+$$ L_2 : f(x) \rightarrow \frac{f(x) + f(1-x)}{2}.$$
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Effect of a linear operator: example [Ginsbourger 2013]}
+Examples of associated sample paths are 
+
+\begin{columns}[c]
+\begin{column}{5cm}
+\begin{center}
+ $k_1 = L_1(L_1(k))$
+\end{center}
+ \includegraphics[height=5cm]{figures/p2-sym1}
+\end{column}
+\begin{column}{5cm}
+\begin{center}
+ $k_2= L_2(L_2(k))$
+\end{center}
+ \includegraphics[height=5cm]{figures/p2-sym2}
+\end{column}
+\end{columns}
+The differentiability is not always respected!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Effect of a linear operator}
+These linear operator are projections onto a space of symmetric functions:
+\begin{center}
+\vspace{0.5cm}
+ \includegraphics[height=2cm]{figures/proj-sym}
+\vspace{0.5cm}
+\end{center}
+What about the optimal projection?\\
+\vspace{0.5cm}
+\alert{$\Rightarrow$ This can be difficult... but it raises interesting questions!}
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
