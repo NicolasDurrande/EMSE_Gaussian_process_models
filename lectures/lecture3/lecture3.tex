@@ -30,7 +30,7 @@
 }
 \makeatother
 
-\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 3/5 \\ \vspace{3mm} \LARGE Tuning Kriging models}{}}
+\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 3/5 \\ \vspace{3mm} \LARGE Tuning of Kriging models}{}}
 \author[Mines St-\'Etienne ]{Mines St-\'Etienne -- Majeure Data Science -- 2016/2017}
 \institute{\texorpdfstring{Nicolas Durrande (durrande@emse.fr)}{}}
 \date{\null}
@@ -134,7 +134,7 @@ We obtain the following model
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-Influence of observation noise $\tau^2$ (for $n(x,y)=\tau^2 \delta_{x,y}$):
+Influence of observation noise $\tau^2$:
 \begin{center}
 \includegraphics[height=3.5cm]{figures/R/ch34_GPRnoise0001} 
 \includegraphics[height=3.5cm]{figures/R/ch34_GPRnoise001} 
@@ -175,7 +175,7 @@ The various steps for building a GPR model are:\\
 \end{enumerate}
 \begin{exampleblock}{Remarks}
 	\begin{itemize}
-		\item It is very common to iterate over steps 2, 3 and 4
+		\item It is common to iterate over steps 2, 3 and 4.
 	\end{itemize}
 \end{exampleblock}
 \end{frame}
@@ -222,7 +222,7 @@ Now, 2 situations can be distinguished\\ \vspace{2mm}
 			\item the model is not appropriate and it should be modified. For example, observation noise can be added.
 		\end{itemize}
 \end{itemize}
-In both cases, the suggested actions will make the matrix invertible.
+In both cases, the covariance matrix will become invertible.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,10 +234,10 @@ This is specially true if
 	\item the kernel corresponds to very regular sample paths (squared-exponential for example)
 	\item the range (or length-scale) parameters are large
 \end{itemize}
-On the other hand, adding a (very) small observation noise can be of great help.\\
 \vspace{3mm}
 In order to avoid numerical problems during optimization, one can:
 \begin{itemize}
+	\item add a (very) small observation noise\\
 	\item impose a maximum bound to length-scales
 	\item impose a minimal bound for noise variance 
 	\item choose a Mat\'ern kernel
@@ -245,10 +245,20 @@ In order to avoid numerical problems during optimization, one can:
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+A few words on the \structure{Complexity} of GPR\\ \vspace{2mm}
+	\begin{itemize}
+  		\item \alert{Storage footprint:} We have to store the covariance matrix which is $n \times n$.
+  		\item \alert{Complexity:} We have to invert the covariance matrix, which requires is $\mathcal{O}(n^3)$.\\
+  		$\Rightarrow$ This limits the number of observation points is between $1000$ and $10\,000$. \vspace{2mm}
+	\end{itemize}
+Note that the complexity do not depend on the dimension of the input space!
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{GPR with trend}
 \subsection{}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
@@ -269,7 +279,7 @@ If the trend $t(.)$ is known, the usual formulas for multivariate normal conditi
 		&= k(x,y) - k(x,X) k(X,X)^{-1} k(X,y)
 	\end{split}
 \end{equation*}
-We can see that the trend is first subtracted and added in the end.
+We can see that the trend is subtracted first and then added in the end.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -597,7 +607,7 @@ k(x,y) = \sigma_0^2  x^2 y^2 + k_{rbf1}(x,y) + k_{rbf2}(x,y) + k_{per}(x,y)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Sum of kernels over tensor space [Durrande 2012]}
+\begin{frame}{Sum of kernels over tensor space}
 \begin{block}{Property}
 \begin{equation*}
 k(\textbf{x},\textbf{y}) = k_1(x_1,y_1) +  k_2(x_2,y_2)
@@ -807,7 +817,7 @@ $=$
 \end{column}
 \end{columns}
 \vspace{5mm}
-Calculation shows we obtain the usual 2D squared exponential kernel.
+\structure{\textbf{Question:}} What kernel do we end up with?
 \end{example}
 \end{frame}
 
@@ -936,7 +946,7 @@ The differentiability is not always respected!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Effect of a linear operator}
-These linear operator are projections onto a space of symmetric functions:
+These linear operators are projections onto a space of symmetric functions:
 \begin{center}
 \vspace{0.5cm}
  \includegraphics[height=2cm]{figures/proj-sym}
@@ -946,6 +956,28 @@ What about the optimal projection?\\
 \vspace{0.5cm}
 \alert{$\Rightarrow$ This can be difficult... but it raises interesting questions!}
 \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\subsection{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We have seen that \vspace{2mm}
+\begin{itemize}
+ \item Kriging model do not necessarily interpolate, but they can if we want them to!
+ \item If we have information about a trend, it is possible to incorporate it in models.
+ \item Kernels encode the prior belief on the function to approximate.
+ \begin{itemize}
+ 	\item They should be chosen accordingly
+ \end{itemize}
+ \item It is sometimes possible to design kernels tailored to the problem at hand.
+\end{itemize}
+\end{frame}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
