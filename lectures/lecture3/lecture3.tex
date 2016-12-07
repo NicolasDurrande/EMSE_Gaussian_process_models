@@ -26,7 +26,7 @@
 \makeatletter
 \newcommand{\shorteq}{%
   \settowidth{\@tempdima}{a}% Width of hyphen
-  \resizebox{\@tempdima}{\height}{=}%
+  \, \resizebox{\@tempdima}{\height}{=} \, %
 }
 \makeatother
 
@@ -45,6 +45,30 @@
   \titlepage
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\vspace{0.75cm}
+\structure{Outline of the lecture:}
+\vspace{0.5cm}
+\begin{enumerate}
+    \item Approximation
+    \begin{itemize}
+    	\item GPR with noisy observations  \vspace{2mm}
+    \end{itemize}
+    \item GPR in practice
+        \begin{itemize}
+    		\item Overall Steps for GPR
+    		\item Numerical stability
+    		\item Numerical complexity  \vspace{2mm}
+    	\end{itemize}
+    \item GPR with trend
+    	\begin{itemize}
+    		\item Ordinary kriging
+    		\item Universal kriging
+    	\end{itemize}
+\end{enumerate}
+\end{frame}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,17 +85,38 @@ We are not always interested in models that interpolate the data. For example, i
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-\vspace{5mm}
-Let $N$ be a process $\mathcal{N}(0,n)$ that represent the observation noise. The expressions of GPR with noise are 
-\begin{equation*}
-	\begin{split}
-	m(x) &= \E[Z(x)|Z(X) + N(X) \shorteq F] \\
-	&= k(x,X) (k(X,X)+n(X,X))^{-1} F \\ 
-	& \\
-	c(x,y) &= \Cov[Z(x),Z(y)|Z(X)+ N(X) \shorteq F] \\
-	&= k(x,y) - k(x,X) (k(X,X)+n(X,X))^{-1} k(X,y)
-\end{split}
-\end{equation*}
+\begin{exampleblock}{Exercise:}
+	Let $f$ be a function of interest and let $F$ be a vector of ``noisy'' observations of $f$ at some input locations $X$:
+	$$ F = f(X) + \varepsilon \text{\qquad with } \varepsilon \sim \mathcal{N}(0, \tau^2 Id). $$
+	Let $Z$ be a Gaussian Process corresponding that can be used as prior distribution for $f$.
+\begin{enumerate}
+	\item Compute the conditional mean of $Z(x) | Z(X)+\varepsilon = F$
+	\item Compute the conditional covariance function
+\end{enumerate}
+\end{exampleblock}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{exampleblock}{Solution:}
+\begin{enumerate}
+	\item The conditional mean is
+		\begin{equation*}
+			\begin{split}
+				m(x) &= \E[Z(x)|Z(X) + \varepsilon \shorteq F] \\
+				&= k(x,X) (k(X,X)+ \tau^2 Id)^{-1} F \\ 
+			\end{split}
+		\end{equation*}
+	\item The conditional variance is
+		\begin{equation*}
+			\begin{split}
+				c(x,y) &= \Cov[Z(x),Z(y)|Z(X)+ \varepsilon \shorteq F] \\
+				&= k(x,y) - k(x,X) (k(X,X)+\tau^2 Id)^{-1} k(X,y)
+			\end{split}
+		\end{equation*}
+\end{enumerate}
+\end{exampleblock}
+Note that is si straightforward to generalize for a noise that is not i.i.d (as long as the noise is Gaussian distributed).
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +139,346 @@ The values of $\tau^2$ are respectively 0.001, 0.01 and 0.1.
 In practice, $\tau^2$ can be estimated with Maximum Likelihood. 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{GPR in practice}
+\subsection{}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The various steps for building a GPR model are:\\ 
+\vspace{3mm}
+\begin{enumerate}
+	\item Create a DoE
+		\begin{itemize}
+			\item What is the overall evaluation budget?
+			\item What is my model for?
+		\end{itemize} \vspace{2mm}
+	\item Choose a kernel \vspace{3mm}
+	\item Estimate the parameters
+		\begin{itemize}
+			\item Maximum likelihood
+			\item Cross-validation
+			\item Multi-start
+		\end{itemize} \vspace{2mm}
+	\item Validate the model 
+		\begin{itemize}
+			\item Test set 
+			\item Leave-one-out to check mean and confidence intervals
+			\item Leave-$k$-out to check predicted covariances
+		\end{itemize}
+\end{enumerate}
+\begin{exampleblock}{Remarks}
+	\begin{itemize}
+		\item It is very common to iterate over steps 2, 3 and 4
+	\end{itemize}
+\end{exampleblock}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+In practice, the following errors may appear:\\
+\begin{itemize}
+	\item[\alert{$\bullet$}] \alert{Error: the matrix is not invertible}
+	\item[\alert{$\bullet$}] \alert{Error: the matrix is not positive definite}
+\end{itemize}
+Covariance matrices are positive semi-definite. Null eigenvalues arise if one information is repeated.
+\begin{example}
+ For $X=(0.1,0.1,0.4,0.6,0.8)$, the covariance of a squared exponential kernel with parameters $\sigma^2=1$, $\theta = 0.2$ is: 
+ \begin{equation*}
+ k(X,X) = 
+ \begin{pmatrix}
+	1.00 & 1.00 & 0.32 & 0.04 & 0.00 \\
+	1.00 & 1.00 & 0.32 & 0.04 & 0.00 \\
+	0.32 & 0.32 & 1.00 & 0.61 & 0.14 \\
+	0.04 & 0.04 & 0.61 & 1.00 & 0.61 \\
+	0.00 & 0.00 & 0.14 & 0.61 & 1.00 \\
+ \end{pmatrix}
+ \end{equation*}
+ The first two columns are the same, so the matrix is not invertible.
+\end{example}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+It is particularly interesting to look at the eigenvectors associated with null eigenvalues. On the previous example, this eigenvector is 
+\begin{equation*}
+P_0 = \left( \frac{1}{\sqrt{2}},-\frac{1}{\sqrt{2}},0,0,0 \right)^t
+\end{equation*}
+Now, 2 situations can be distinguished\\ \vspace{2mm}
+\begin{itemize}
+	\item[(A)] The observations are compatible with model: $P_0^t F = 0$.
+	\begin{itemize}
+		\item the model is appropriate and one observation can be removed without any loss of information.
+	\end{itemize}
+	\item[(B)] The observations \textbf{are not} compatible with model: $P_0^t F \neq 0$.
+		\begin{itemize}
+			\item the model is not appropriate and it should be modified. For example, observation noise can be added.
+		\end{itemize}
+\end{itemize}
+In both cases, the suggested actions will make the matrix invertible.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+In practice, invertibility issues may arise if observations points are close-by. \\
+\vspace{3mm}
+This is specially true if
+\begin{itemize}
+	\item the kernel corresponds to very regular sample paths (squared-exponential for example)
+	\item the range (or length-scale) parameters are large
+\end{itemize}
+On the other hand, adding a (very) small observation noise can be of great help.\\
+\vspace{3mm}
+In order to avoid numerical problems during optimization, one can:
+\begin{itemize}
+	\item impose a maximum bound to length-scales
+	\item impose a minimal bound for noise variance 
+	\item choose a Mat\'ern kernel
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{GPR with trend}
+\subsection{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We have seen that GPR models go back to zero if we consider a centred prior. \\ \vspace{5mm} This behaviour is not always wanted
+\begin{center}
+	\includegraphics[height=5cm]{figures/R/trend_pb}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+If the trend $t(.)$ is known, the usual formulas for multivariate normal conditional distribution apply:
+\begin{equation*}
+	\begin{split}
+		m(x) &= \E[Z(x)|Z(X) \shorteq F] \\
+		&= t(x) + k(x,X) k(X,X)^{-1} (F-t(X)) \\ \vspace{3mm}
+		c(x,y) &= \Cov[Z(x),Z(y)|Z(X) \shorteq F] \\
+		&= k(x,y) - k(x,X) k(X,X)^{-1} k(X,y)
+	\end{split}
+\end{equation*}
+We can see that the trend is first subtracted and added in the end.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+In the previous example, we can consider that trend is constant $t(x)=10$:
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_knowncst}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We can also try a linear trend $t(x)=11-2x$:
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_knownlin}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+In practice, the trend is often unknown... The question is then how to estimate it.\\ \vspace{5mm} 
+We will distinguish:
+\begin{itemize}
+	\item \textbf{simple kriging}: there is no trend or it is known
+	\item \textbf{ordinary kriging}: the trend is a constant
+	\item \textbf{universal kriging}: the trend is given by basis functions
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We will first focus on \textbf{ordinary kriging}. We thus need to estimate a constant:\\ \vspace{5mm} 
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_dataordinary}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The idea of considering $t(x)=\text{mean}(F)$ looks all right on this example...
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_basicordinary}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+but not on this one.
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_pbbasicordinary}
+\end{center}
+Any other idea?
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We have considered maximum likelihood estimation for the kernel's parameter... why not doing the same thing here ?
+\begin{exampleblock}{Exercise}
+\begin{enumerate}
+	\item Compute the maximum likelihood estimation $\hat{t}$ of $t$. A few hints
+	\begin{itemize}
+		\item consider the log-likelihood
+		\item take the derivative
+		\item find where it is null
+	\end{itemize}
+	\item What can we recognize in this expression ?
+\end{enumerate}
+We recall that the likelihood is
+\begin{equation*}
+L(t) = \frac{1}{\displaystyle (2 \pi)^{n/2} |k(X,X)|^{1/2}} \exp \left(-\frac12 (x-t \mathbf{1})^t k(X,X)^{-1} (x-t \mathbf{1})  \right)
+\end{equation*}
+\end{exampleblock}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{exampleblock}{Solution}
+\begin{enumerate}
+	\item We obtain $ \displaystyle \hat{t} = \frac{\mathbf{1}^t k(X,X)^{-1} F}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}}$ 
+	\item It can be seen as an orthogonal projection $ \displaystyle t = \frac{\PSi{\mathbf{1}, F}{}}{\PSi{\mathbf{1},\mathbf{1}}{}}$ for a inner product given by 
+	$k(X,X)^{-1}$. 
+\end{enumerate}
+\end{exampleblock}
+\begin{columns}[c]
+\begin{column}{4cm}
+On the previous example we obtain $t=10.3$:
+\end{column}
+\begin{column}{6cm}
+\hspace{-8mm} \includegraphics[height=4.2cm]{figures/R/trend_estimordinary}
+\end{column}
+\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Under the hypothesis $F=Z(X)$, the estimation $ \displaystyle \hat{t} = \frac{\mathbf{1}^t k(X,X)^{-1} F}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}}$ is a sample from $ \displaystyle T = \frac{\mathbf{1}^t k(X,X)^{-1} Z(X)}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}}$. \\ \vspace{5mm}
+The distribution of $T$ is Gaussian with moments:
+\begin{equation*}
+\begin{split}
+	\E[T] & = \frac{\mathbf{1}^t k(X,X)^{-1} \E[Z(X)]}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}} = t\\
+	\Var[T] & = \frac{\mathbf{1}^t k(X,X)^{-1} \Var[Z(X)] k(X,X)^{-1} \mathbf{1}}{(\mathbf{1}^t k(X,X)^{-1} \mathbf{1})^2} = \frac{1}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}}\\
+\end{split}
+\end{equation*}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The expression of the \textbf{best predictor} is given by the usual conditioning of a GP:
+\begin{equation*}
+m(x) = \E[Z(x)|Z(X)=F] = \hat{t} - k(x,X) k(X,X)^{-1} (F - \hat{t}) \vspace{5mm}
+\end{equation*} 
+
+Regarding the \textbf{model variance}, it must account for the estimator's variance. We will use the law of total Variance :
+\begin{equation*}
+\Var[X] = \E[\Var(X|Y)] + \Var[\E(X|Y)]
+\end{equation*} 
+If we apply this to the GPR variance prediction we get:
+\small
+\begin{equation*}
+\begin{split}
+\Var[Z(x)|Z(X)] &=  k(x,x) - k(x,X) k(X,X)^{-1} k(X,x)   \\
+& \qquad + \frac{(\mathbf{1} + k(x,X)k(X,X)^{-1}\mathbf{1})^t(\mathbf{1} + k(x,X)k(X,X)^{-1}\mathbf{1})}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}} \\
+\end{split}
+\end{equation*} 
+\normalsize
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+On the previous example we obtain:
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_ko}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We would have obtain this the mean were considered known.
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_badko}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+it can be compared with simple kriging
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_badks}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+If the trend is not constant but linear, quadratic, etc. it is interesting to consider the following probabilistic model for the prior:
+\begin{equation*}
+	Z(x) = Y(x) + \sum_i \beta_i h_i(x)
+\end{equation*}
+where the $h_i(x)$ are basis functions and the $\beta_i$ are unknown scalars.\\ \vspace{5mm}
+As previously, we can consider the maximum likelihood estimator 
+\begin{equation*}
+ \hat{\beta} = (H^t k(X,X)^{-1} H)^{-1} H^t k(X,X)^{-1} F 
+\end{equation*} 
+where $H$ is the matrix of general term $H_{i,j}=h_j(X_i)$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The final equations are very similar to ordinary kriging:
+\begin{block}{Universal kriging}
+\begin{equation*}
+\begin{split}
+m(x) &= h(x)^t\hat{\beta} - k_x K^{-1} (F - h(X)^t\hat{\beta}) \\
+c(x,y) &=  k(x,y) - k_x K^{-1} k_y^t \\
+& \qquad +(h(x)^t + k_xK^{-1}H)^t(H^t K^{-1} H)^{-1}(h(y)^t + k_yK^{-1}H) \\
+\end{split}
+\end{equation*} 
+\\ \vspace{3mm}
+where $k_x = k(x,X)$ and $K = k(X,X)$.
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\structure{Remarks}
+\begin{itemize}
+	\item Ordinary kriging is a special case of universal kriging with only one constant basis function.
+	\item The model always interpolates whatever $\hat{\beta}$ is.
+	\item the trend part can be seen as generalised least square (regression with correlated residuals)
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We consider the following example
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_data}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Universal kriging model with linear trend: $h_1(x) = 1$, $h_2(x) = x$.
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_ku}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+It can be compared to simple kriging with known trend
+\begin{center}
+	\includegraphics[height=6cm]{figures/R/trend_kstrend}
+\end{center}
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
