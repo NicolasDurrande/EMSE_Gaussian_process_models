@@ -40,7 +40,7 @@ kWhite <- function(x,y,param=1){
 
 ## plot covariance matrix
 x <- seq(0,1,0.01)
-Kmat <- kGauss(x,x)
+Kmat <- kBrown(x,x)
 image(x,x,Kmat[length(x):1,])
 
 ## Question 2-3
@@ -48,7 +48,7 @@ x <- seq(0,1,0.002)
 y <- 0.7
 sigma2 <- 1
 theta <- 0.2
-kern <- kGauss
+kern <- kBrown
 
 par(mfrow=c(1,2))
 plot(x,kern(x,y,c(sigma2,theta)),type='l',lwd=2,ylab=paste0('k(x,',y,')'))
@@ -79,11 +79,11 @@ hist(Z[,ind1],30,freq=FALSE,xlab='Z(x1)',xlim=c(-4,4),ylim=1.2*c(0,1/(sqrt(2*pi*
 lines(seq(-4,4,0.1),dnorm(seq(-4,4,0.1),0,sqrt(sigma2)))
 
 # joint distribution of (Z(x1),Z(x2))
-ind2 <- 30
+ind2 <- 82
 x2 <- x[ind2]
 
 par(mfrow=c(1,2))
-matplot(x,t(Z)[,1:200],type='l',lty=1,lwd=1.5,col=sample(diverge_hcl(10)),xlab='x',ylab='Z(x)')             
+matplot(x,t(Z)[,1:50],type='l',lty=1,lwd=1.5,col=sample(diverge_hcl(10)),xlab='x',ylab='Z(x)')             
 lines(c(x1,x1),c(-4,4),lty=2,lwd=2)
 lines(c(x2,x2),c(-4,4),lty=2,lwd=2)
 
@@ -91,7 +91,7 @@ plot(Z[,ind1],Z[,ind2],pch=16,col=rgb(32/255,74/255,135/255,.5),xlab='Z(x1)',yla
 par(mfrow=c(1,1))
 
 # joint distribution of (Z(x1),Z(x2),Z(x3))
-ind3 <- 60
+ind3 <- 30
 #pairs(Z[,c(ind1,ind2,ind3)],pch=16,col=rgb(32/255,74/255,135/255,.25))
 
 plot3d(Z[,ind1],Z[,ind2],Z[,ind3],xlab='Z(x1)',ylab='Z(x2)',zlab='Z(x3)',type='p',radius=0.1,col=rgb(32/255,74/255,135/255),alpha=0.6)
@@ -127,7 +127,7 @@ GPRcov <- function(x,X,kern,param){
 
 ####################
 ## Question 7
-x <- seq(0,1,0.002)
+x <- seq(-5,5,0.01)
 kern <- kMat52
 param <- c(1,.2)
 mp <- GPRmean(x,X,Y,kern,param)
