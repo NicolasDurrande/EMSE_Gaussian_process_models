@@ -1,0 +1,84 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}     % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage{verbatim}
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+%\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+
+\title{\vspace{-1cm}Gaussian Process Regression -- Lab 2}
+\author{Mines Saint-\'Etienne, Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{}
+Le but de ce TP est de répondre à un problème de propagation d'incertitudes en utilisant le package \emph{R} \emph{DiceKriging}. Deux parties sont à distinguer dans ce TP : la première étant la construction et la validation de modèles de krigeage universel sur une fonction 2D, la seconde étant la résolution proprement dite du problème de propagation d'incertitude.
+
+\paragraph{}
+Le package \emph{DiceKriging} est développé par O. Roustant, D. Ginsbourger et Y. Deville. La fonction centrale pour la construction de modèles de krigeage est la fonction \texttt{km}. Les exemples donnés dans l'aide de cette fonction vous permettront de faire vos premiers pas. 
+
+\section*{La fonction de branin}
+
+\paragraph{}
+Pour commencer, nous allons nous intéresser à une fonction test sur $[0,1]^2$ appelée fonction de Branin. Cette fonction est déjà implémentée  dans le package \emph{DiceKriging}. %Afin de construire les plans d'expérience, l'utilisation du package \emph{DiceDesign} est recommandée. Une fois ce package installé et chargé, les plans LHS peuvent être construits grâce à la fonction \texttt{lhsDesign}. Ils penvent ensuite être optimisés en utilisant la fonction \texttt{maximinSA\_LHS}.
+
+\subsubsection*{Influence et choix des termes de tendance}
+\paragraph{}
+Pour commencer, construisez plusieurs modèles en faisant varier les termes de tendances et les noyaux. Afin de juger de leur pertinence, vous pouvez utiliser les indicateurs suivants :
+\begin{itemize}
+	\item[$\bullet$] la fonction \texttt{plot.km()}
+	\item[$\bullet$]  écart quadratique des résidus sur un plan test
+	\item[$\bullet$]  loi des résidus après les avoir standardisés
+	\item[$\bullet$]  cross validation (fonction \texttt{leaveOneOut.km})
+	\item[$\bullet$]  ...
+\end{itemize}
+
+Le package \emph{rgl} est intéressant pour réaliser des graphiques 3D (cf l'aide des fonctions \texttt{persp3d, surface3d} et \texttt{points3d}).
+
+\subsubsection*{Propagation d'incertitudes}
+\paragraph{}
+On cherche à calculer $I=\mathrm{E}[Branin(U)]$ où $U$ est une v.a. de loi uniforme sur $[0,1]^2$ tout en limitant le nombre d'appel qui est fait de la fonction Branin (10 - 20 appels maximum). Proposez un estimateur $I_1$ basé sur l'utilisation de la moyenne d'un modèle de krigeage. Comparez le résultat obtenu avec une estimation Monte Carlo effectué directement sur la fonction Branin. On pourra s'intéresser à deux types de tirages MC sur Branin : l'un avec un grand nombre de points pour avoir une valeur de référence l'autre avec un nombre de points égal au nombre de points du plan d'experience pour comparer des résultats obtenus à budgets computationnels égaux. La méthode proposée apporte-elle une amélioration ?
+
+\paragraph{}
+On s'intéresse maintenant à la variance de l'estimateur construit. Cela a-t-il un sens pour l'estimateur qui a été développé précédemment ? Proposez un nouvel estimateur $I_2$ prenant en compte les incertitudes du modèle et calculer sa variance.
+
+\section*{Etude d'un cas industriel}
+
+\subsubsection*{Evaluation de criticité nucléaire}
+\paragraph{}
+Les données à utiliser sont fournies avec le package DiceEval. Après avoir chargé ce package, importez les données à l'aide de la commande \textit{data(testIRSN5D)}. Le but de l'exercice est de calculer la probabilité que la criticité \textit{keff} soit supérieure à 0.90 sachant que toutes les variables d'entrée sont de loi uniforme sur $[0,1]$. Il est demandé de tester quelques modèles et de comparer les résultats obtenus en utilisant ou non la variance des modèles de krigeage.
+
+\subsubsection*{Description des données}
+\paragraph{}
+Nuclear criticality safety assessments are based on an optimization process to search for safety-penalizing physical conditions in a given range of parameters of a system involving fissile materials. 
+\paragraph{}
+In the following examples, the criticality coefficient (namely k-effective or keff) models the nuclear chain reaction trend: 
+\begin{itemize}
+	\item keff $>$ 1 is an increasing neutrons production leading to an uncontrolled chain reaction potentially having deep consequences on safety,
+	\item keff = 1 means a stable neutrons population as required in nuclear reactors, 
+  \item keff $<$ 1 is the safety state required for all unused fissile materials, like for fuel storage. 
+
+\end{itemize}
+
+\paragraph{}
+Besides its fissile materials geometry and composition, the criticality of a system is widely sensitive to physical parameters like water density, geometrical perturbations or structure materials (like concrete) characteristics. Thereby, a typical criticality safety assessment is supposed to verify that k-effective cannot reach the critical value of 1.0 (in practice the limit value used is 0.95) for given hypothesis on these parameters. 
+
+\paragraph{}
+The benchmark system is an assembly of four fuel rods contained in a reflecting hull. Regarding criticality safety hypothesis, the main parameters are the uranium enrichment of fuel (namely "e", U235 enrichment, varying in [0.03, 0.07]), the rods assembly geometrical characteristics (namely "p", the pitch between rods, varying in [1.0, 2.0] cm and "l", the length of fuel rods, varying in [10, 60] cm), the water density inside the assembly (namely "b", varying in [0.1, 0.9]) , and the hull reflection characteristics (namely "r", reflection coefficient, varying in [0.75, 0.95]). 
+
+\paragraph{}
+In this criticality assessment, the MORET (Fernex et al., 2005) Monte Carlo simulator is used to estimate the criticality coefficient of the fuel storage system using these parameters (among other) as numerical input,. The output k-effective is returned as a Gaussian density which standard deviation is setup to be negligible regarding input parameters sensitivity. 
+
+\end{document} 
