@@ -1,0 +1,84 @@
+\documentclass[11pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathpazo} % math & rm
+\linespread{1.05}     % Palatino needs more leading (space between lines)
+\usepackage[scaled]{helvet} % ss
+\usepackage{courier} % tt
+\normalfont
+\usepackage[T1]{fontenc}
+
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{dsfont}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+
+\usepackage{array}
+\newcolumntype{N}{@{}m{2pt}@{}}
+
+\title{Gaussian Process Regression -- Lab 3}
+\author{Mines Saint-\'Etienne, Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-1cm}
+\hrule
+\vspace{5mm}
+
+\paragraph{}
+The aim of this lab session is to implement various methods for generating designs of experiments and to be able to asses the quality of a DoE. During the whole lab, we will assume that the DoE is over $[0,1]^d$, and we will denote by $n$ the number of design points.
+
+A reminder of \emph{R} basic commands can be found on my webpage. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Latin Hypercube Samples}
+
+\begin{enumerate}[label = Q \arabic*.]
+	\item Write a function with parameters $n$ and $d$ that returns a Latin hypercube design.
+	\item Plot a few DoE for $d=2$ or $3$. Do they fill the space? 
+	\item What can you say about the distributions of the points on the marginals?
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Centroidal Voronoi Tesselations}
+
+\begin{enumerate}[label = Q \arabic*., resume]
+	\item Write a function with parameters $n$ and $d$ that returns a CVT design. Feel free to use either the McQueen or the k-means algorithm.
+	\item Plot a few DoE for $d=2$ or $3$. Do they fill the space? 
+	\item What can you say about the distributions of the points on the marginals?
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Low Discrepancy Sequence}
+\paragraph{}
+The functions \texttt{sobol} and \texttt{halton} are already implemented in the package \texttt{randtoolbox}.
+\begin{enumerate}[label = Q \arabic*., resume]
+	\item Plot a few DoE for $d=2$ or $3$. Do they fill the space? 
+	\item What can you say about the distributions of the points on the marginals?
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Assessing a design}
+
+\begin{enumerate}[label = Q \arabic*., resume]
+		\item Write a function that takes a DoE as input and that returns the value of the maximin criterion.
+		\item Write a function that takes a DoE as input and that returns the value of the minimax criterion.
+		\item Write a function that takes a DoE as input and that returns the value of the minimax criterion.
+		\item Write a function that takes a DoE as input and that returns the value of the discrepancy.
+		\item Write a function that takes a DoE as input and that returns the IMSE criterion.
+		\item According to these, which design is the best? You can also compare your DoE with $n$ points sampled uniformly over $[0,1]^d$.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Optimization of DoE}
+
+\begin{enumerate}[label = Q \arabic*., resume]
+		\item Write an exchange algorithm that can optimize a LHS design.  
+\end{enumerate}
+
+
+
+\end{document} 
