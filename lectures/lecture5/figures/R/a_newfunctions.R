@@ -1,5 +1,7 @@
 
 lightblue <- rgb(114/255,159/255,207/255,.3) ; darkblue <- rgb(32/255,74/255,135/255,1) ; darkbluetr <- rgb(32/255,74/255,135/255,.3)
+lightred <- rgb(239/255,41/255,41/255,.3) ;  darkred  <- rgb(164/255,0/255,0/255,1) ; darkredtr <- rgb(164/255,0/255,0/255,.3) ; 
+
 darkPurple <- "#5c3566" ; darkBlue <- "#204a87" ; darkGreen <- "#4e9a06" ; darkChocolate <- "#8f5902" ; darkRed  <- "#a40000" ; darkOrange <- "#ce5c00" ; darkButter <- "#c4a000"
 
 ## usual kernels

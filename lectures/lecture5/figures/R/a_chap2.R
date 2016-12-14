@@ -1,7 +1,7 @@
 library(DiceKriging)
 library(tikzDevice)
 library(MASS)
-source("a_functions.R")
+source("a_newfunctions.R")
 
 ##################################################################"
 ### Modeles de krigeage
@@ -151,6 +151,32 @@ KB <- diag(model[[2]][(m+1):(2*m),(m+1):(2*m)])
 low95B <- mB - 1.96*sqrt(pmax(0,KB))
 upp95B <- mB + 1.96*sqrt(pmax(0,KB))
 
+###########
+## plot multi-outputs
+tikz('ch2_multiGPR1.tex', standAlone = TRUE, width=5, height=5)
+par(mar=c(4.5,2,1.5,1.5))
+plot(xx, mA, type="n", xlab="$x$",ylab="", ylim=c(-1.5,1.5), cex.axis=1.5,cex.lab=2)
+
+# model A
+  polygon(c(xx,rev(xx)),c(upp95A,rev(low95A)),border=NA,col=lightblue)
+  lines(xx,mA,col=darkblue,lwd=3)
+  lines(xx,low95A,col=darkbluetr)  
+  lines(xx,upp95A,col=darkbluetr)  
+  points(X[1:n,1],Y[1:n],pch=4,lwd=2,cex=1.2,col=darkblue)
+
+# model B
+  polygon(c(xx,rev(xx)),c(upp95B,rev(low95B)),border=NA,col=lightred)
+  lines(xx,mB,col=darkred,lwd=3)
+  lines(xx,low95B,col=darkredtr)  
+  lines(xx,upp95B,col=darkredtr)  
+  points(XB[,1],Y[(n+1):(2*n)],pch=4,lwd=2,cex=1.2,col=darkred)
+
+legend("topright",legend=c("$m_A$","$m_B$"),col=c(darkblue,darkred),lwd=3,cex=2)
+dev.off()
+tools::texi2dvi('ch2_multiGPR1.tex',pdf=T)
+
+###########
+## plot multi-inputs
 tikz('ch2_multiGPR.tex', standAlone = TRUE, width=5, height=5)
 par(mar=c(.5,.5,.5,.5))
 pmat <- persp(xx,xx,matrix(0,m,m),nticks =2,theta = 25, phi = 30,expand=.9, border=NA,col=NA,xlab='$t$',ylab='label',zlab='$T$',cex.axis=1.5,cex.lab=2,zlim=c(-2.5,2.5))
