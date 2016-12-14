@@ -194,7 +194,13 @@ All the math stay the same, we just need to specify a covariance function that t
 \begin{equation*}
 k\left( \begin{psmallmatrix} \phantom{'}t\phantom{'} \\ \phantom{'}c\phantom{'} \end{psmallmatrix},\begin{psmallmatrix} t' \\ c' \end{psmallmatrix} \right) = k_{cont}(t,t') k_{disc}(c,c')
 \end{equation*}
-where $k_{disc}(c,c')$ can be described by a covariance matrix. In practice, this covariance matrix has to be estimated. If there are to outputs (or two levels for the categorical variable), it is a $2 \ times 2$ covariance matrix. It can be parameterised by
+where $k_{disc}(c,c')$ can be described by a covariance matrix. In practice, this covariance matrix has to be estimated. 
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+If there are \textbf{2 outputs} (or 2 levels for the categorical variable), it is a $2 \times 2$ covariance matrix. It can be parameterised by
 \small
 $$k_{disc} = 
 \begin{pmatrix}
@@ -202,25 +208,19 @@ $$k_{disc} =
 	\sigma_1 \sigma_2 \rho & \sigma_2^2 \\
 \end{pmatrix}$$
 \normalsize
-with  $\sigma_1,\ \sigma_2 \geq 0$ and $\rho \in [-1,1]$. The latter can be estimated by ML.
+with  $\sigma_1,\ \sigma_2 \geq 0$ and $\rho \in [-1,1]$. The latter can be estimated by ML.\\
 \vspace{5mm}
-
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-In higher dimension, it is possible to consider the following parameterization for $k_{disc}$:
+\textbf{In higher dimension} (say $k$), it is possible to consider the following parameterization for $k_{disc}$:
 \small
 $$k_{disc} = W W^T$$
 \normalsize
-with  $\sigma_1,\ \sigma_2 \geq 0$ and $\rho \in [-1,1]$.
-\vspace{5mm}
+where $W$ is a $k \times l$ matrix. The choice of $l$ allows to tune the complexity of the estimation.
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-With this framework, the conditioning can also include observations more sophisticated than $Z(X)=F$... \\
+It is also possible to include in models observations more sophisticated than $Z(X)=F$... \\
 \vspace{5mm}
 For instance, if we know the integral of the function to approximate and it's derivative in a few points, we want to consider
 $$ Z \ \left| \ Z(X) = F, \int Z = a, \frac{\dx Z}{\dx x}(X')= F' \right. $$
@@ -270,34 +270,223 @@ As always, we can simulate conditional paths:
 	\end{center}
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[Application]{Example of GP application: Detecting periodicity in gene expression}
+\subsection{}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The 24 hour cycle of days can be observed in the oscillations of many physiological processes of living beings.\\
+\begin{examples}
+ Body temperature, jet lag, sleep, ... but also observed for plants, micro-organisms, etc.
+\end{examples}
+\vspace{0.5cm}
+This phenomenon is called the \alert{circadian rhythm} and the mechanism driving this cycle is the \alert{circadian clock}. \\
+\vspace{0.5cm}
+To understand how the circadian clock operates at the gene level, biologist look at the temporal evolution of gene expression. 
+\end{frame}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\vspace{0.75cm}
+The aim of gene expression is to measure the activity of various genes:
+\begin{center}
+ \includegraphics[height=6.5cm]{figures/DNAtranscription} 
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\vspace{0.5cm}
+The mRNA concentration is measured with microarray experiments\\
+\vspace{0.25cm}
+\begin{center}
+ \includegraphics[height=3.8cm]{figures/Affymetrix} \qquad \qquad \includegraphics[height=3.8cm]{figures/microarray} 
+\end{center}
+\vspace{0.25cm}
+The chip is then scanned to determine the occupation of each cell and reveal the concentration of mRNA. 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Experiments to study the circadian clock are typically:
+\begin{enumerate}
+ \item Expose the organism to a 12h light / 12h dark cycle
+ \item at t=0, transfer to constant light
+ \item perform a microarray experiment every 4 hours to measure gene expression
+\end{enumerate}
+ 
+\begin{block}{}
+Regulators of the circadian clock are often rhythmically regulated.\\
+\qquad \alert{$\Rightarrow$ identifying periodically expressed genes gives an insight on the overall mechanism.}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{block}{}
+In practice, we have for each gene:
+\vspace{.3cm}
+\begin{center}
+ \includegraphics[height=4.5cm]{figures/Fig2-f}
+\end{center}
+\vspace{.3cm}
+\end{block}
+ Can we extract the periodic part of a signal ?\\
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Let $Z$ be a GP and $B(t) = ( \sin(t), \cos(t), \dots, \sin(nt), cos(nt))^t$ be the fourier basis. We consider the projection of $Z$ onto the basis:
+\small
+$$Z_p(t) = \frac{ \PSi{Z,\sin}{} }{ \PSi{\sin,\sin}{} } \sin(t) +
+\frac{ \PSi{Z,\cos}{} }{ \PSi{\cos,\cos}{} } \cos(t) +
+\dots + 
+\frac{ \PSi{Z,\sin(n.)}{} }{ \PSi{\sin(n.),\sin(n.)}{} } \sin(nt) $$
+\normalsize
+ This give a decomposition of the GP:
+$$Z = Z_p + \underbrace{Z - Z_p}_{Z_a}.$$
+By considering the appropriate inner product, we can ensure that $Z_p$ and $Z_a$ are independant. 
+\vspace{0.5cm}
+\begin{block}{Property}
+ The reproducing kernel of $Z_p$ is 
+ \begin{equation*}
+  k_p(x,y) = B(x)^t G^{-1} B(y)
+ \end{equation*}
+ where $G$ is the Gram matrix $G$ associated to $B$.
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We can deduce the following decomposition of the kernel:
+ \small
+ \begin{equation*}
+  k(x,y) = k_p(x,y) + \underbrace{k(x,y) - k_p(x,y)}_{k_a(x,y)}
+ \end{equation*}
+\begin{block}{Property: Decomposition of the model}
+ The decomposition of the kernel gives directly
+ \small
+ \begin{equation*}
+ \begin{split}
+  m(t) & = (k_p(t) + k_a(t))^t (K_p+K_a)^{-1} F \\
+  &  = \underbrace{k_p(t)^t (K_p+K_a)^{-1} F}_{\text{periodic sub-model }m_p} + \underbrace{k_a(t)^t (K_p+K_a)^{-1} F}_{\text{aperiodic sub-model }m_a}
+ \end{split}
+ \end{equation*}
+ \normalsize
+and we can associate a prediction variance to the sub-models:
+\small
+\begin{equation*}
+\begin{split}
+ v_p(t) & = k_p(t,t) - k_p(t)^t (K_p+K_a)^{-1} k_p(t) \\
+ v_a(t) & = k_a(t,t) - k_a(t)^t (K_p+K_a)^{-1} k_a(t)
+\end{split}
+\end{equation*}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{example}
+For the observations shown previously we obtain:
+\begin{center}
+ \includegraphics[height=4cm]{figures/Fig2-m} \includegraphics[height=4cm]{figures/Fig2-mp} \includegraphics[height=4cm]{figures/Fig2-ma}
+\end{center}
+\end{example}
+Can we can do better?\\ 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\begin{block}{}
+Previously, the kernels were parameterized by 2 variables: 
+\begin{equation*}
+ k(x,y,\sigma^2, \theta)
+\end{equation*}
+but writing $k$ as a sum allows to tune independently the parameters of the sub-kernels.
+\end{block}
+Let $k^*$ be defined as
+\begin{equation*}
+ k^*(x,y,\sigma^2_p,\sigma^2_a, \theta_p, \theta_a) = k_p(x,y,\sigma^2_p, \theta_p) + k_a(x,y,\sigma^2_a, \theta_a)
+\end{equation*}
+Furthermore, we include a $5^{th}$ parameter in $k^*$ accounting for the period by changing the Fourier basis:
+\begin{equation*}
+ B_\omega(t) = (\sin(\omega t), \cos(\omega t), \dots, \sin(n \omega t), cos(n \omega t))^t
+\end{equation*}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+If we optimize the 5 parameters of $k^*$ with maximum likelihood estimation we obtain: 
+\begin{center}
+ \includegraphics[height=4cm]{figures/Fig2-m-estim} \includegraphics[height=4cm]{figures/Fig2-mp-estim-top} \includegraphics[height=4cm]{figures/Fig2-ma-estim-top}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+\vspace{0.5cm}
+We used data from Edward 2006, based on \textit{arabidopsis}.
+\begin{columns}[c]
+\column{5cm}
+The dimension of the data is:
+\begin{itemize}
+ \item 22810 genes
+ \item 13 time points
+\end{itemize}
+\column{5cm}
+\begin{center}
+ \includegraphics[height=4cm]{figures/Arabidopsis}
+\end{center}
+\end{columns}
+\begin{block}{}
+ Edward 2006 gives a list of the 3504 most periodically expressed genes. The comparison with our approach gives:
+ \begin{itemize}
+ \item 21767 genes with the same label (2461 per. and 19306 non-per.)
+ \item 1043 genes with different labels
+\end{itemize}
+\end{block}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Let's look at genes with different labels:
+\begin{center}
+ \begin{tabular}{ccc}
+  \includegraphics[height=5cm]{figures/per_Ed_Only.pdf} & \qquad &\includegraphics[height=5cm]{figures/per_RKHS_Only.pdf} \\
+  {\small periodic for Edward} & & {\small periodic for our approach}
+ \end{tabular}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 \subsection{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-\begin{block}{Small Recap}
+\begin{block}{We have seen that}
 \begin{itemize}
- \item GPR models do not necessarily interpolate. \vspace{2mm}
- \item Multi-output GPR is straightforward
- \item Various way to create new kernels:
- \begin{itemize}
- 	\item Finite dim kernels
- 	\item Bochner theorem
- 	\item Making New from Old
- 	\item Linear operators
- \end{itemize}
+ \item Gaussian process regression is a great tool for modeling
+ \item Kernels can (and should) be tailored to the problem at hand
+ \item It is possible to include in models more that function values 
 \end{itemize}
 \end{block}
-
-\begin{block}{Making new from old}
+\vspace{0.4cm}
+\begin{block}{What cannot be done with GPs...}
+It is rather difficult to:
 \begin{itemize}
- \item sum
- \item product
- \item kernel rescaling
+ \item impose non linear constrains
+ \item deal with a (very) large number of observations
+ \item ...
 \end{itemize}
 \end{block}
+\vspace{0.4cm}
+Gaussian process models is of \textbf{particular interest in industry}, and it is an \textbf{active research topic}...
 \end{frame}
 
 
