@@ -43,12 +43,12 @@ plot3d(X[,1],X[,2],Y,cex=24,xlab="X1",ylab="X2",zlab="Y")
 ## Test various models
 
 m1 <- km(~1, design=data.frame(X), response=data.frame(Y),
-	     covtype="gauss",iso=TRUE)
+	     covtype="gauss")
 
 m2 <- km(Y~X1+X2+X1*X2, design=data.frame(X), response=data.frame(Y),
-	     covtype="gauss",iso=TRUE)
+	     covtype="gauss",iso=TRUE,multistart=5)
 
-m3 <- km(Y~I((X1+X2-1)^2)), design=data.frame(X), response=data.frame(Y), 
+m3 <- km(Y~I((X1+X2-1)^2), design=data.frame(X), response=data.frame(Y), 
 	     covtype="gauss",iso=TRUE)
 
 # models details can be obtained with
@@ -123,7 +123,7 @@ abline(0,1)
 ###############################################
 # testing residuals distribution
 
-model <- m3
+model <- m1
 
 ## on a large test set
 NT <- 1000
@@ -149,7 +149,7 @@ lines(xg,dnorm(xg), col = "red", lwd = 2)
 ###############################################
 # testing residuals covariances
 
-model <- m3
+model <- m2
 
 SR <- matrix(0,100,2)
 for(i in 1:100){
@@ -190,7 +190,7 @@ mean(M13)
 NT <- 1000
 XT <- matrix(runif(2*NT),NT,2)
 
-MM <- predict(m3, data.frame(XT), "UK",cov.compute=TRUE)
+MM <- predict(m2, data.frame(XT), "UK",cov.compute=TRUE)
 
 SC <- mvrnorm(100,MM$mean,MM$cov)
 
@@ -239,7 +239,6 @@ P <- predict(M, XT, "UK")
 # failure probability, taking only the mean into account
 mean(P$mean>s)
 
-# borne max
 proba_dep <- rep(0,nrow(XT))
 for(i in 1:nrow(XT)){
  proba_dep[i] <- 1-pnorm(s,P$mean[i],P$sd[i])
