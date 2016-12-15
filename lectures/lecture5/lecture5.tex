@@ -13,7 +13,7 @@
 \input{../style.tex} 
 
 
-\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 5/5 \\ \vspace{3mm} \LARGE Advanced GPR}{}}
+\title[Majeure Data Science -- Surrogate models and GPR]{\texorpdfstring{ \small Surrogate models and Gaussian Process regression -- lecture 5/5 \\ \vspace{3mm} \LARGE Advanced GP models}{}}
 \author[Mines St-\'Etienne ]{Mines St-\'Etienne -- Majeure Data Science -- 2016/2017}
 \institute{\texorpdfstring{Nicolas Durrande (durrande@emse.fr)}{}}
 \date{\null}
@@ -143,6 +143,7 @@ Instead of considering the GP to be multioutput, it is possible to see the GP as
 \begin{exampleblock}{Exercise:}
 	Compute the kernel of $Z$.
 \end{exampleblock}
+\pause
 \vspace{3mm}
 With this settings, the conditional mean
 \small
@@ -248,7 +249,7 @@ $$ Z \ \left| \ Z(X) = F, \int Z = a, \frac{\dx Z}{\dx x}(X')= F' \right. $$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
-Similarly, we can include in the model some derivative observations:
+Similarly, we can include in a model some derivative observations:
 	\begin{center}
 	\includegraphics[height=6cm]{figures/R/exotic_der}
 	\end{center}
@@ -272,7 +273,7 @@ As always, we can simulate conditional paths:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Application]{Example of GP application: Detecting periodicity in gene expression}
+\section[GPR Application]{Example of GPR application: Detecting periodicity in gene expression}
 \subsection{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -344,12 +345,12 @@ Let $Z$ be a GP and $B(t) = ( \sin(t), \cos(t), \dots, \sin(nt), cos(nt))^t$ be 
 $$Z_p(t) = \frac{ \PSi{Z,\sin}{} }{ \PSi{\sin,\sin}{} } \sin(t) +
 \frac{ \PSi{Z,\cos}{} }{ \PSi{\cos,\cos}{} } \cos(t) +
 \dots + 
-\frac{ \PSi{Z,\sin(n.)}{} }{ \PSi{\sin(n.),\sin(n.)}{} } \sin(nt) $$
+\frac{ \PSi{Z,\cos(n.)}{} }{ \PSi{\cos(n.),\cos(n.)}{} } \cos(nt) $$
 \normalsize
  This give a decomposition of the GP:
 $$Z = Z_p + \underbrace{Z - Z_p}_{Z_a}.$$
 By considering the appropriate inner product, we can ensure that $Z_p$ and $Z_a$ are independant. 
-\vspace{0.5cm}
+\vspace{0.2cm}
 \begin{block}{Property}
  The reproducing kernel of $Z_p$ is 
  \begin{equation*}
@@ -464,6 +465,100 @@ Let's look at genes with different labels:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[GP classification]{GP models for classification}
+\subsection{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Until now, we have focused on GP \textbf{Regression}: we were using GPs to predict a continuous output given some input values.\\
+\vspace{5mm} 
+Gaussian process models are also useful for \textbf{classification} problems:
+\begin{center}
+ \includegraphics[height=5cm]{figures/R/classif_data.pdf}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+We consider the following probabilistic model for the data
+\begin{enumerate}
+ 	\item Let $Y$ be a Gaussian process over $\mathds{R}$.
+ 	\item Let $\Phi$ be a sigmoid transformation such as
+ 	$$ \Phi(y) = \frac{1}{1+e^{-y}} \text{\qquad \textbf{or} \qquad $\Phi$ is the Gaussian cdf.}$$ 
+ 	\item We denote by $Z$ the image of $Y$ by $\Phi$: $Z(x) = \Phi(Y(x))$.
+ 	\item The observation $F_i \in \{-1,\ 1\}$ at input $X_i$ is given by a Bernouilli sample with parameter $Z(X_i)$.
+ \end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Same thing with images\\
+% \begin{center}
+ \begin{tabular}{ccc}
+  GP $Y(x)$ & $Z(x)=\Phi(Y(x))$ & $F_i \sim \mathcal{B}(Z(X_i))$ iid \\
+  \includegraphics[height=3.5cm]{figures/R/classif_GP.pdf} & 
+  \includegraphics[height=3.5cm]{figures/R/classif_phiGP.pdf} &
+  \includegraphics[height=3.5cm]{figures/R/classif_datasmall.pdf} \\
+ \end{tabular}
+% \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+In order to make predictions, we need to compute the conditional distribution of $Y$ (or $Z$) given the observed data: $Y$ and $Z$ are called latent variables because we never have observations of them.\\
+\vspace{5mm}
+\begin{exampleblock}{Exercise}
+	\begin{enumerate}
+		\item Is the vector $(Y,F)$ a Gaussian vector?
+		\item What can you say about $P(F_i|Y(X_i))$? Deduce the probability of $P((F_1,F_2)|Y(X_1),Y(X_2))$. 
+		\item Use Bayes rule to re-write the conditional pdf of $(Y(X_1),Y(X_2))$ given the observations $(F_1,F_2)$.
+		\item Give a graphical representation of this conditional distribution. 
+	\end{enumerate}
+\end{exampleblock}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+Examples of posteriors
+\begin{center}
+ \includegraphics[height=5cm]{figures/classif_post}
+\end{center}
+\begin{flushright}
+{\small \emph{source:} Nickisch and Rasmussen, JMLR 2008.}
+\end{flushright}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+The conditional distribution of $Y|F$ is not Gaussian... In practice it is possible to:
+\begin{itemize}
+	\item Use the mode of the distribution.
+	\item Sample from the distribution using MCMC.
+	\item Make a Gaussian approximation of this non Gaussian distribution:
+	\begin{itemize}
+		\item Laplace method
+		\item Variational inference
+		\item ...
+	\end{itemize}
+\end{itemize}
+Once the distribution of $Y(X)|F$ has been approximated, we can deduce the distribution of $Y(x)|F$. It is then possible to obtain predictions for the labels of future observations at $x$.
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+As for GPR, GP classification models are straightforward to generalize in higher dimension
+\begin{center}
+ \includegraphics[height=5cm]{figures/classif_2d}
+\end{center}
+\begin{flushright}
+{\small \emph{source:} Hensman, Durrande and Solin, arXiv 2016.}
+\end{flushright}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 \subsection{}
 
@@ -471,22 +566,25 @@ Let's look at genes with different labels:
 \begin{frame}{}
 \begin{block}{We have seen that}
 \begin{itemize}
- \item Gaussian process regression is a great tool for modeling
+ \item Gaussian processes are a great tool for modeling
+ \begin{itemize}
+ 	\item Regression and classification
+ \end{itemize}
  \item Kernels can (and should) be tailored to the problem at hand
  \item It is possible to include in models more that function values 
 \end{itemize}
 \end{block}
-\vspace{0.4cm}
-\begin{block}{What cannot be done with GPs...}
-It is rather difficult to:
+\vspace{0.2cm}
+\begin{block}{What we have not seen...}
 \begin{itemize}
- \item impose non linear constrains
- \item deal with a (very) large number of observations
+ \item Unsupervised models: non-linear generalization of PCA
+ \item How to deal with a (very) large number of observations
+ \item links with the RKHS theory
  \item ...
 \end{itemize}
 \end{block}
-\vspace{0.4cm}
-Gaussian process models is of \textbf{particular interest in industry}, and it is an \textbf{active research topic}...
+\vspace{0.2cm}
+Gaussian process models are of \textbf{particular interest in industry}, and they are also an \textbf{active research topic}...
 \end{frame}
 
 
