@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[tmargin=2cm,bmargin=2cm,lmargin=3cm,rmargin=3cm]{geometry}
+\usepackage{amstext,amsmath}
+\usepackage{graphicx}
+\usepackage[french]{babel}
+\usepackage{dsfont}
+
+\newcommand{\var}{\mbox{var}}
+\newcommand{\E}{\mbox{E}}
+
+\begin{document}
+\begin{center}
+\hrule \vspace{3mm}
+	{\Large Examen de rattrapage -- majeure Data Science -- UP4}\\ \vspace{3mm}
+	{3 mars 2016 -- Durée 1h30 -- Documents interdits}\\ \vspace{3mm}
+	\hrule
+\end{center}
+\vspace{5mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exercice 1 (5 pts)}
+Après avoir résumé les principes de fonctionnement des principaux algorithmes d'optimisation globale vus en cours, vous expliquerez dans quel cas utiliser un algorithme plutôt qu'un autre en \emph{justifiant} par des raisons techniques votre explication.
+
+\section*{Exercice 2 (4 pts)}
+Let us consider the 2-dimensional function:
+$$f(x_{1},x_{2})= x_1 + x_1^2 x_2^2$$
+Assume that $X_{1}$, $X_{2}$ are independent and identically distributed random variables, with for $i=1,2$: $\E(X_i)=0$, $\var(X_i)=1$, and denote $v = \var(X_i^2)<+\infty$.
+\begin{enumerate}
+\item Compute the Sobol-Hoeffding decomposition of $f(X_1,X_2)$.
+\item Let $D$ the global variance of $f(X_1, X_2)$. Express the Sobol indices as a function of $D$ and $v$. Indication: Start by $S_2, S_{1,2}$ and deduce $S_1$.
+\end{enumerate}
+
+\section*{Exercice 3 (3 pts)}
+You would like to perform a global sensitivity analysis of a time-consuming $d$-dimensional function $f$, and your computational budget is limited to $n=10d$ function evaluations. What kind of method can you use directly on $f$? What other strategy can you propose? Discuss briefly the advantages/drawbacks of the two methods.
+
+\section*{Exercice 4 (4 pts)}
+Soient $Y$ et $Z$ deux processus Gaussiens centrés indépendants sur $\mathds{R}$, de fonctions de covariance $k_Y$ et $k_Z$. De plus, on introduit le processus $W$ qui est défini par $W(x) = Y(x) + Z(x)$.
+\begin{enumerate}
+	\item Donnez l'expression du noyau de $W$.
+	\item Donnez l'expression de la moyenne conditionnelle, de la variance conditionnelle et de la fonction de covariance conditionnelle de $W$ sachant qu'il prend les valeurs $F=(f_1,...,\ f_n)$ aux points $X=(x_1,...,\ x_n)$.
+\end{enumerate}
+On part maintenant du principe que le processus $Y$ correspond au signal que l'on souhaite prédire et que $Z$ correspond à du bruit d'observation (mais pas forcement un bruit blanc). Comme pour les questions précédentes, on dispose d'observations de $W$: $W(X)=F$. 
+\begin{enumerate}
+	\setcounter{enumi}{2}
+	\item Proposez un modèle sous forme d'un processus conditionnel. Donnez l'expression de la moyenne conditionnelle et de la variance de prédiction.
+\end{enumerate}
+
+\section*{Exercice 5 (4 pts)}
+\begin{enumerate}
+	\item Détaillez les différentes étapes pour construire un plan d'expérience de type LHS, et pour l'optimiser par rapport au critère maximin.
+	\item Détaillez les différentes étapes permettant d'obtenir un plan d'expérience de type tessellations centroidales de Voronoï.
+\end{enumerate}
+
+\end{document}

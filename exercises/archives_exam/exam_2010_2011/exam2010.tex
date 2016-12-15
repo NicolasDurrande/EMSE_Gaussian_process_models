@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage{nips07submit_modif,times}
+
+\usepackage[latin1]{inputenc}
+\usepackage[french]{babel}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{bbm}
+\usepackage{amsthm,amssymb,amsbsy,amsmath,amsfonts,amssymb,amscd}
+\usepackage{graphicx}
+\usepackage{dsfont}
+
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Théorème}
+\newtheorem{hyp}{Hypothèse}
+
+\newcommand{\Hick}{from Hickernell 1998}
+
+\title{
+Modélisation par Processus Gaussiens  \\ \vspace{\baselineskip} %\null \\
+\Large{Examen}}
+\author{14 décembre 2010}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-1cm}
+\subsection*{Exercice 1 :}
+\paragraph{}
+On considère une trajectoire issue d'un processus $Z$ sur $\mathds{R}^2$ de noyau produit tensoriel : $$K(x,y)=K_1(x_1,y_1)K_2(x_2,y_2).$$
+\begin{figure}[!ht]%
+\begin{center}
+\includegraphics[width=6cm]{R/fig1.png}
+\end{center}
+\end{figure}
+\\
+Soit $Z_1(x_1)$ le processus correspondant à la restriction de $Z$ sur la droite $x_2=0$. On a donc $Z_1(x_1)=Z(x_1,0)$. 
+
+\paragraph{1.}
+Calculez le noyau de covariance du processus $Z_1$ : $K_{Z_1}(x_1,y_1)=\mathrm{cov}(Z_1(x_1),Z_1(y_1))$. 
+
+\paragraph{2.}
+Puisque la courbe tracée en rouge correspond à une trajectoire de $Z_1$, quel type de noyau vous semble le plus vraisemblable pour $Z_1$ ? 
+
+\paragraph{3.}
+De même, si on note $Z_2(x_2)=Z(0,x_2)$, quel type de noyau intuitez vous pour $Z_2$ ?
+
+\paragraph{4.}
+Déduisez en une expression de $K$. Cette expression peut dépendre des paramètres $\sigma_1$, $\sigma_2$, $\theta_1$, $\theta_2$.
+
+\paragraph{5.}
+Le processus $Z$ est il stationnaire et/ou isotrope ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Exercice 2 :}
+
+Pour les trois modèles de krigeage suivants, le noyau utilisé est le noyau Matern 3/2 de paramètres $(\sigma^2,\theta) = (0.5,0.8)$.
+\begin{figure}[!ht]%
+\begin{center}
+\includegraphics[width=12cm]{R/fig2.pdf}
+\end{center}
+\end{figure}
+
+\paragraph{1.}
+Précisez pour les trois figures : 
+\begin{itemize}
+	\item[$\bullet$] le type de krigeage utilisé,
+	\item[$\bullet$] la tendance choisie.
+\end{itemize}
+
+\paragraph{2.}
+Si $\sigma^2$ avait varié d'un modèle à l'autre, une des conclusions précédentes n'aurait pas été possible. Laquelle et pourquoi ?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Exercice 3 :}
+Le but de cet exercice est de trouver un noyau $K_\mathcal{S}$ adapté à la modélisation d'une fonction $f$ qui est symétrique sur $[-1,1]$. Soit $Z$ un processus gaussien sur [-1,1] de moyenne $\mu$ et de noyau $K$. On note $\mathcal{S}$ l'application qui a toute fonction $f$ associe sa symétrisée $f_\mathcal{S}$ :
+\begin{equation}
+\mathcal{S} : f(x) \mapsto f_\mathcal{S}(x) = \frac{f(x)+f(-x)}{2}
+\end{equation}
+
+\paragraph{1.}
+Soit $Z_\mathcal{S}$ la symétrisée du processus $Z$ : $Z_\mathcal{S}=\mathcal{S}(Z)$. Montrez que l'on a : 
+\begin{equation}
+\begin{split}
+& \mathrm{E}(Z_\mathcal{S}(x))=\mu \\
+& \mathrm{cov}(Z_\mathcal{S}(x),Z_\mathcal{S}(y))=\frac{K(x,y)+K(-x,y)+K(x,-y)+K(-x,-y)}{4}.
+\end{split}
+\end{equation}
+
+\paragraph{2.}
+Notons $K_\mathcal{S}$ le noyau de $Z_\mathcal{S}$. Montrez que $K_\mathcal{S}(-x,y)=K_\mathcal{S}(x,y)$
+
+\paragraph{3.}
+Soit $X=\{x_1,\dots,x_n \}$ un ensemble de points sur $[-1\ 1]$, $Y=f(X)$ le vecteur des observations et $m_\mathcal{S}(x)$, $v_\mathcal{S}(x)$ la moyenne et la variance de krigeage construites avec le noyau $K_\mathcal{S}$. Déduire de la question précédente que
+\begin{itemize}
+	\item[$\bullet$] $m_\mathcal{S}(-x_1)=f(x_1)$
+	\item[$\bullet$] $v_\mathcal{S}(-x_1)=0$
+\end{itemize}
+
+\paragraph{4 Question Bonus.}
+On vient de voir que l'utilisation du noyau $K_\mathcal{S}$ permet de prendre en compte la symétrie de la fonction $f$ dans la construction du modèle de krigeage. Si on simule des trajectoires du processus conditionnel $Z_\mathcal{S}|Z_\mathcal{S}(X)=Y$, on trouve qu'elles sont toutes symétriques par rapport à 0. Ces trajectoires seront elles équivalentes aux trajectoires du processus $Z|Z(X)=Y,Z(-X)=Y$ (on symétrise ici l'ensemble des points du plan d'expérience) ?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Exercice 4 :}
+Soit $D=[0,1]^n$, $X$ un plan d'expérience sur $D$ et $Y$ le vecteur des observations. Notons $Z$ un PG indexé par $D$, centré et de noyau $K$.
+
+\paragraph{1.}
+Soit $x_0 \in D$. Quelle est la loi de $Z(x_0)|Z(X)=Y$ ? Notons $Y_{x_0}$ une variable de même loi.
+
+\paragraph{2.}
+On considère maintenant que l'on ajoute le point $x_0$ au plan d'expérience et que l'on ajoute la variable aléatoire $Y_{x_0}$ au vecteur des observations. Donnez alors l'expression du meilleur prédicteur et de la variance de prédiction. Ces 2 fonctions sont-elles aléatoires ? 
+
+\paragraph{3.}
+Montrez que l'ajout de l'observation aléatoire $Y_{x_0}$ ne modifie pas la moyenne de krigeage, i.e. $\mathrm{E}(Z(x)|Z(X)=Y,Z(x_0)=Y_{x_0})=\mathrm{E}(Z(x)|Z(X)=Y)$. 
+
+\paragraph{4.}
+En utilisant la formule de la variance totale
+\begin{equation}
+\begin{split}
+\mathrm{var}(Z(x)|Z(X)=Y,Z(x_0)=Y_{x_0}) = & \mathrm{E}[ \mathrm{var}(Z(x)|Z(X)=Y,Z(x_0)=Y_{x_0})] \\
+& \qquad + \mathrm{var}(\mathrm{E}[Z(x)|Z(X)=Y,Z(x_0)=Y_{x_0}]),
+\end{split}
+\end{equation}
+calculez $\mathrm{var}(Z(x)|Z(X)=Y,Z(x_0)=Y_{x_0})$. Concluez.
+
+
+\newpage
+$\ $
+
+
+
+
+
+
+
+
+
+\end{document} 

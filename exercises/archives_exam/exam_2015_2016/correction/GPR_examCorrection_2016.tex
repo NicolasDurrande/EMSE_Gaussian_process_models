@@ -1,0 +1,140 @@
+%% LyX 2.1.2.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass{article}
+\usepackage[latin9]{inputenc}
+\usepackage[tmargin=2.5cm,bmargin=2.5cm,lmargin=3cm,rmargin=3cm]{geometry}
+\usepackage{amstext,amsmath}
+\usepackage{graphicx}
+% \usepackage{babel}
+\usepackage{dsfont}
+
+\newcommand{\var}{\mbox{var}}
+\newcommand{\E}{\mbox{E}}
+\newcommand{\cov}{\mbox{cov}}
+
+\begin{document}
+\begin{center}
+\hrule \vspace{3mm}
+	{\Large Statistical modelling and its applications}\\ \vspace{3mm}
+	{Exam Solutions -- Mines Saint-\'Etienne -- 5th January 2016} \\  \vspace{3mm}
+	% {\footnotesize No document allowed except the Gaussian process regression handout and an A4 sheet with hand written notes.}\\ \vspace{3mm}
+	\hrule
+\end{center}
+\vspace{5mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exercise 1}
+
+\begin{enumerate}
+	\item Let $X$ be the subset of input space points where we want the sample to be evaluated (typically $X = \{0,\ 0.01,\ \dots,\ 1\}$). We will denote $n$ its number of elements. The 4 steps for generating samples from a Gaussian process are:
+		\begin{enumerate}
+			\item Compute the vector of the process mean at $X$: $m = \mu(X)$.
+			\item Compute the covariance matrix of the process evaluated at $X$: $K=k(X,X)$ and its Cholesky decomposition: $K=CC^t$.
+			\item Generate a vector $Y$ of $n$ iid samples $\mathcal{N}(0,1)$.
+			\item A sample of the process evaluated at $X$ is then given by $Z=m + C Y$.
+		\end{enumerate} 
+
+	\item The results are summarized in the following table:
+		\begin{center}
+				\begin{tabular}{|c|c|c|c|}
+				\hline
+				process & kernel & centred & stationary \\ \hline
+				$Z_1$ & Brownian & no & no \\
+				$Z_2$ & squared exponential & no & no \\
+				$Z_3$ & Mat\'ern 3/2 & yes & yes \\
+				$Z_4$ & exponential & yes & yes \\
+				\hline
+			\end{tabular}
+		\end{center}
+
+	\item In this figures, $Z_5$ has variance 1 and length scale $0.1$ and $Z_6$ has parameters $(\sigma^2,\theta) = (100,10)$.
+
+	\item The main steps for computing the mean value of a function using no more that 50 observations are:
+		\begin{enumerate}
+			\item Choose one or various kernels according to the prior belief on the function to approximate.
+			\item Choose a type of Gaussian process model (simple Kriging, ordinary Kriging, Universal Kriging) according to the prior belief on $f$.  
+			\item Estimate the model parameters by maximising the likelihood. 
+			\item Validate the models using cross validation methods (both the mean value and predicted conditional covariance must be validated) and choose the best model.
+			\item An estimate of the mean value of $f$ is given by the integrals of conditional samples.
+		\end{enumerate} 
+\end{enumerate} 
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exercise 2 }
+Recall that $f(x_{1},x_{2})= x_1 + x_2 + x_1 x_2$, and $X_{1}$, $X_{2}$ are independent random variables, 
+with $X_1 \sim \mathcal{U}[-\frac{a}2,\frac{a}2]$  and  $X_2 \sim \mathcal{U}[-\frac{1}2,\frac{1}2]$,
+with $a>0$.
+
+\begin{enumerate}
+\item We immediately have $\E(X_1) = E(X_2) = 0$, and by independence $E(X_1 X_2) = E(X_1)E(X_2)=0$, proving the centring conditions. Furthermore $E(X_1 X_2 \vert X_1) = X_1 E(X_2 \vert X_1) = X_1 E(X_2) = 0$, and similarly $E(X_1 X_2 \vert X_2) = 0$, 
+proving the non-simplification conditions.
+By unicity, the Sobol-Hoeffding decomposition of $f(X_1, X_2)$ is then given by:
+$$\mu_0 = 0, \quad  \mu_1(X_1) = X_1, \quad \mu_2(X_2) = X_2, \quad \mu_{1,2}(X_1, X_2) = X_1X_2$$
+\item We immediately have $D_1 = \var(X_1)= \frac{a^2}{12}$ and $D_2 = \var(X_2) =  \frac{1}{12}$.\\
+Further, using once again the independence of $X_1, X_2$, we get:\\
+$$D_{1,2} = \var(X_1 X_2)= \E(X_1^2 X_2^2) = \E(X_1^2)\E(X_2^2) = \var(X_1) \var(X_2) = \frac{a^2}{12} \times \frac{1}{12}$$
+Hence $D = D_1 + D_2 + D_{1,2} = \frac{1}{12} \left( 1 + \frac{13}{12} a^2 \right)$
+\item We have $S_1 = \frac{a^2}{1+ \frac{13}{12} a^2} = \frac{1}{\frac{13}{12} + \frac{1}{a^2}}$ which is an increasing function of $a$. 
+Similarly, $S_2 = \frac{1}{1+ \frac{13}{12} a^2}$ is a decreasing function of $a$. This is rather logical: Increasing the uncertainty of $X_1$ increases the importance of $X_1$ in the output $f(X_1, X_2)$ and reduces the importance of $X_2$.\\
+\end{enumerate} 
+
+\noindent We now assume that $X_{1}$, $X_{2}$ are independent random variables, with $X_1, X_2 \sim \mathcal{U}[0, 1]$.\\
+
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item We cannot have $\mu_1(X_1) = X_1$ since for instance $\E(X_1) = \frac{1}{2} \neq 0$.
+\item The Sobol decomposition of $f(X_1, X_2)$ can be obtained with the recursion formulae, or by using a Taylor expansion of $f$ at $(\frac12, \frac12)$. By one of these methods, we obtain:
+$$\mu_0 = \frac54, \quad \mu_1(X_1) = \frac32 \left(X_1 - \frac12\right), \quad \mu_2(X_2) = \frac32\left(X_2 - \frac12\right), 
+\quad \mu_{1,2}(X_1, X_2) = \left(X_1 - \frac12\right)\left(X_2 - \frac12\right)$$
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exercise 3: ANOVA kernels}
+
+\begin{enumerate}
+\item Since the function $(x,y) \mapsto 1$ is symmetric and positive semi-definite (\emph{spsd}), $1+k_i(x_i,y_i)$ is also \emph{spsd} as a sum of \emph{spsd} functions. ANOVA kernels then can then be seen as a product of \emph{spsd} functions, which is a valid covariance function. 
+
+\item Knowing the regularity of $f$, one should consider smooth kernels such as the squared exponential (or Gaussian) kernel. Since we have no information regarding the mean of the process, one can try ordinary Kriging. 
+\item For the simple Kriging case, the expressions of the predicted mean and variance are: 
+\begin{equation*}
+\begin{split}
+ 	m(x) &= \hat \mu + k(x,X) k(X,X)^{-1} (F- \hat \mu) \\
+	v(x) &= k(x,x) - k(x,X) k(X,X)^{-1} k(X,x) + \frac{(1 + k(x,X)k(X,X)^{-1}\mathbf{1})^2}{\mathbf{1}^t k(X,X)^{-1} \mathbf{1}}
+\end{split}
+\end{equation*} 
+where $\hat \mu$ is the maximum likelihood estimation of the process mean : $\hat \mu =  \frac{\displaystyle 1^t k(X,X)^{-1} F}{ \displaystyle 1^t k(X,X)^{-1} 1}$. The 95\% confidence intervals are given by $m(x) \pm 2 \sqrt{v(x)}$.
+\item Since the first term of the mean expression can be written as an entry-wise product $k(x,X) = \prod_{i=1}^d  \big(1+k_i(x_i,X_{[.,i]}) \big)$, the expression of $m$ can be expended as:
+\begin{equation*}
+\begin{split}
+ 	m(x) &= \prod_{i=1}^d  \big(1^t+k_i(x_i,X_{[.,i]}) \big) k(X,X)^{-1} F \\
+ 	m(x) &= \left(1^t + \sum_{i=1}^d k_i(x_i,X_{[.,i]}) + \sum_{i<j}^d k_i(x_i,X_{[.,i]})k_j(x_j,X_{[.,j]}) + \dots +  \prod_{i=1}^d k_i(x_i,X_{[.,i]})  \right) k(X,X)^{-1} F \\
+ 	m(x) &= 1^t k(X,X)^{-1} F + \sum_{i=1}^d k_i(x_i,X_{[.,i]}) k(X,X)^{-1} F + \dots +  \ \left( \prod_{i=1}^d k_i(x_i,X_{[.,i]})  \right) k(X,X)^{-1} F \\
+\end{split}
+\end{equation*} 
+This corresponds to a sum of $2^d$ functions with increasing interaction order: $m(x) = m_0 + \sum m_i(x_i) + \dots + \sum m_{1,\dots,d}(x)$. However, this decomposition does not coincides with the Sobol decomposition since, for example, the non constant terms of the decomposition are not zero-mean.
+\item Writing the kernel as a sum of kernels implies that the process can be seen as a sum of independent processes: $Z(x) = Z_0 + \sum Z_i(x_i) + \dots + \sum Z_{1,\dots,d}(x)$. For $I \subset \{1,\dots,d\}$, the term $m_I$ can thus be seen as $m_I(x_I) = \E [Z_I(x_I) | Z(X)=F]$.
+\item If the mean is known, we should consider simple Kriging. Furthermore, since there is no interaction of order higher than 2, the kernel expression can be simplified to
+\begin{equation*}
+k(x,y) = 1 + \sum_{i=1}^d k_i(x_i,y_i) + \sum_{i<j}^d k_i(x_i,y_i)k_j(x_j,y_j).
+\end{equation*}
+
+
+\item If the $k_i$ satisfy $\int_0^1 k_i(s,x) \, ds = 0$ for all $x \in [0,1]$, then all the sub-models $m_I$ and $m_J$ are $L^2$-orthogonal for $I \neq J$. As a consequence, the sub-models correspond directly to the Sobol-Hoeffding decomposition.
+\item[Bonus:] Let $Z$ be a centred process over $[0,1]$ with kernel $k$ such that $\displaystyle \left(Z,\int Z(s) \, ds \right)$ is Gaussian. We thus have
+\begin{equation*}
+\begin{split}
+\cov \left[ Z(x),\int Z(s) \, ds \right] &= \int k(x,s) \, ds \\
+\cov \left[ \int Z(s) \, ds ,\int Z(s) \, ds \right] &= \iint k(s,t) \, ds \, dt .
+\end{split}
+\end{equation*}
+The usual multivariate normal conditioning formula apply to compute the conditional covariance:
+\begin{equation*}
+\cov \left[ Z(x),Z(y) \left|  \int Z(s) \, ds = 0 \right. \right] = k(x,y) - \frac{\displaystyle  \int k(x,s) \, ds \int k(y,s) \, ds}{\displaystyle  \iint k(s,t) \, ds \, dt}
+\end{equation*}
+This expression can be used as univariate kernels $k_i$ and it does satisfy $\displaystyle \int_0^1 k_i(s,x) \, ds = 0$.
+\end{enumerate}
+
+\end{document}

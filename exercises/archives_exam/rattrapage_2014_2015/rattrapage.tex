@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[margin=2cm]{geometry}
+
+\begin{document}
+
+\hline
+\section*{Sujet A}
+\subsubsection*{Planification d'expériences.}
+Qu'est-ce qu'un plan du type tesselation centroïdale de Voronoi ? Donnez un algorithme permettant de les construire.
+
+\subsubsection*{Analyse de sensibilité}
+Donnez la représentation FANOVA de la fonction $f(x) = \sin(x_1) + x_1 x_2$ définie sur $[0, \pi]$. 
+
+\subsubsection*{Modélisation statistique}
+Soit $Z$ un processus gaussien centré de noyau gaussien. Quelle est la loi du processus obtenu en dérivant $Z(x)$ ?
+
+\subsubsection*{Optimisation}
+Détaillez l'expression de l'expected improvement.
+\vspace{1cm}
+\hline
+\vspace{5cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hline
+\section*{Sujet B}
+\subsubsection*{Planification d'expériences.}
+Qu'est-ce que la D-G optimalité ?
+
+\subsubsection*{Analyse de sensibilité}
+Calculez l'indice de Sobol $S_1$ de $f(x) = x_1 + x_2^2 + x_1 x_2$ définie sur $[0, 1]$.
+
+\subsubsection*{Modélisation statistique}
+Comment construire un modèle de krigeage sachant les observations suivantes: $Z(X_1)=F_1,\ Z'(X_2)=F_2,\ Z(X_3)=F_3$ (la seconde observation est une dérivée) ?
+
+\subsubsection*{Optimisation}
+Qu'est-ce que la méthode du recuit simulé ?
+\vspace{1cm}
+\hline
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hline
+\section*{Sujet C}
+\subsubsection*{Planification d'expériences.}
+Qu'est-ce que la discrépance ?
+
+\subsubsection*{Analyse de sensibilité}
+Expliquez la méthode de screening de Morris.
+
+\subsubsection*{Modélisation statistique}
+Pour un noyau de type produit tensoriel, montrez que $Z(x_3)|Z(x_1),Z(x_2) \stackrel{loi}{=} Z(x_3)|Z(x_2)$ lorsque $x_1=(0,0),\ x_2=(1,0),\ x_3=(1,2)$.
+
+\subsubsection*{Optimisation}
+Expliquez comment marche la méthode CMAES.
+
+\vspace{1cm}
+\hline
+\vspace{3cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Questions subsidiaires}
+\begin{itemize}
+	\item Construire le plan D/G-optimal à un point pour un modèle linéaire sur $[0,1]$
+	\item Montrer que le meilleur prédicteur interpole
+	\item Loi d'un processus non dérivable en un point
+	\item Que pouvez vous dire de la planification optimale pour le krigeage ?
+
+\end{itemize}
+
+\end{document}
