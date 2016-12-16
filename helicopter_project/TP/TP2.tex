@@ -1,0 +1,142 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage[francais]{babel}
+\usepackage[latin1]{inputenc}
+%\usepackage{fullpage}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage[top=3cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+
+\renewcommand{\baselinestretch}{1.1}
+
+\title{\vspace{-1cm} TP2 Projet hélicoptère : construction de modèles de krigeage}
+\author{Mines Saint-\'Etienne, majeure Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+\maketitle
+Le but de ce TP est de construire un modèle statistique du temps de chute à partir des expériences qui ont été réalisées. Le meilleur modèle obtenu sera utilisé pour les séances suivantes.
+
+\subsection*{Réflexions préliminaires}
+Avant de vous lancer dans la création de modèles, effectuez une première analyse des données. De plus, prenez le temps de vous poser des questions telles que :
+\begin{itemize}
+	\item Un pré-traitement des données est-il nécessaire (données aberrantes, ...) ?
+ 	\item Est-il pertinent de changer la paramétrisation du problème ? 
+ 	\item ...
+\end{itemize} 
+
+\subsection*{Construction de modèles de krigeage (1h30)}
+
+Le package \texttt{DiceKriging} vous permettra de gagner un temps précieux. La construction de modèles se fait alors à l'aide de la fonction \texttt{km}, et les prédictions à l'aide de la fonction  \texttt{predict}. De plus, ce package possède déjà des outils de diagnostic des modèles (\texttt{plot(model), summary(model)}) et il permet d'estimer les paramètres des noyaux par maximum de vraisemblance ou par validation croisée. Par ailleurs, le package \emph{DiceView} peut être utile pour obtenir des réprésentations graphiques de modèles.
+
+\paragraph{}
+Comparez différents modèles en essayant différents noyaux et différentes tendances. Ces modèles permettent-ils d'obtenir de meilleurs résultats qu'un simple modèle de régression linéaire ?
+
+\paragraph{}
+Choisissez le modèle qui vous semble le mieux adapté et donnez des arguments vous ayant ammenés à faire ce choix. Attention, cela a-t-il du sens d'appliquer des méthodes \emph{leave-one-out} pour juger de la qualité d'un modèle ?
+Si le temps le permet, analysez la robustesse des estimations des paramètres des noyaux.
+
+\paragraph{}
+Interprétez les valeurs des paramètres du modèle retenu (bruit d'observation, portées, ...). Si vous choisissez d'utiliser des termes de tendance, peuvent-ils s'interpréter ?
+
+\subsection*{Analyse de sensibilité (1h30)}
+\paragraph{}
+Appliquez les méthodes vues en cours d'analyse de sensibilité pour représenter les effets principaux et calculez les indices de Sobol. D'après le modèle, quelles sont les variables (et les interactions) qui sont influentes ? Cela peut-il s'interpréter physiquement ?
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section*{Aide : fonctions et packages \texttt{R} utiles}
+
+\begin{itemize}
+	\item construire un modèle de krigeage : package \texttt{DiceKriging}, fonctions \texttt{km, predict.km})	
+	\item pour l'analyse des modèles : \texttt{plot(model), print(model), summary(model)}
+\end{itemize}
+
+\end{document}
+
+
+\begin{Verbatim}[frame=single,fontsize==\tiny]
+generateCVT <- function(npts, dim, nite)
+\end{Verbatim}
+Le plan d'expériences s'écrira comme une matrice de $npts$ lignes et $dim$ colonnes.
+
+\subsection{Hypercubes latins}
+Créez un script R permettant de générer un hypercube latin aléatoire (normalisé) pour un nombre quelconque de points et une dimension quelconque.
+
+\begin{Verbatim}[frame=single,fontsize==\tiny]
+generateLHS <- function(npts, dim)
+\end{Verbatim}
+
+\subsection{Critères}
+Créez un script R permettant de calculer le critère maximin d'un plan. Le script fournira également en sortie la matrice des interdistances (taille $npts \times npts$). Attention à éviter les calculs redondants (la matrice est symétrique !).
+
+\begin{Verbatim}[frame=single,fontsize==\tiny]
+evalMinDist <- function(X)
+{ (.....)
+return( list(minDist = d, allDist = D) ) }
+\end{Verbatim}
+
+\subsection{Hypercubes latins optimisés}
+Utilisez le script précédent pour construire des hypercubes latins optimisés. Selon votre vitesse d'avancement, vous coderez au choix :
+\begin{itemize}
+ \item une recherche aléatoire pure : on génère un certain nombre de plans et on garde le meilleur ;
+ \item un algorithme d'échange simple : on génère un plan, puis on propose des échanges aléatoires qu'on accepte s'ils améliorent le critère ;
+ \item un algorithme d'échange avec recuit simulé.
+\end{itemize}
+Dans les 2 derniers cas, les performances peuvent être améliorées en choisissant pour l'échange un point critique pour le critère.
+
+\section{Analyse}
+Générez et comparez des plans CVT, LHS quelconque et LHS optimisé pour les configurations suivantes :
+\begin{itemize}
+ \item dimension 2, 10 points ; 
+ \item dimension 4, 40 points ;
+ \item dimension 10, 150 points.
+\end{itemize}
+
+Observez en particulier les différences sur :
+\begin{itemize}
+ \item la répartition sur les marginales de dimension 1 (histogrammes)
+ \item la répartition sur les marginales de dimension 2 (fonction \texttt{pairs})
+ \item la valeur du critère \textit{maximin}, éventuellement l'histogramme des interdistances.
+\end{itemize}
+Peut-on déterminer facilement les ``meilleurs'' plans ? Essayez éventuellement d'autres critères / visualisations afin de faciliter votre choix.
+
+\section{Préparation du projet : plan de taille $4 \times 40$}
+Vous aurez besoin, pour le projet, d'un plan d'expériences de 40 points en dimension 4. Sauvegardez le ``meilleur'' plan que vous ayez généré selon la méthode de votre choix.
+\textbf{Ce plan est nécessaire pour la suite des TPs}.
+
+NB : Les éléments vous ayant conduit à choisir votre plan doivent figurer dans le rapport.
+
+\subsection*{Aide : fonctions et packages \texttt{R} utiles}
+
+\begin{itemize}
+	\item pour générer des permutations : \texttt{sample.int}
+	\item pour les modèles linéaires : \texttt{lm}
+	\item pour le krigeage : package \texttt{DiceKriging} (fonctions \texttt{km, predict.km})	
+	\item pour la représentation 3D : \texttt{scatterplot3d} (dans \texttt{library("scatterplot3d")}), \texttt{persp}, \texttt{contour}
+	\item pour l'analyse des modèles : \texttt{plot(model), print(model), summary(model)}
+\end{itemize}
+
+\end{document}

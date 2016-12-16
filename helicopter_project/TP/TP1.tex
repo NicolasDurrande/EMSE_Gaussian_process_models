@@ -1,0 +1,74 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage[francais]{babel}
+\usepackage[latin1]{inputenc}
+%\usepackage{fullpage}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage[top=3cm, bottom=3cm, left=3cm , right=3cm]{geometry}
+
+\renewcommand{\baselinestretch}{1.1}
+
+\title{\vspace{-1cm} TP1 Projet hélicoptère : plans remplissant l'espace (3h)}
+\author{Mines Saint-\'Etienne, majeure Data Science,  2016\:-\:2017 }
+\date{}
+
+\begin{document}
+\maketitle
+L'objectif de cette matinée est d'obtenir un bon plan d'expérience à 50 points et de réaliser les expériences. Pensez à vous organiser et à travailler en parallèle au sein des groupes.
+
+\subsection*{Construction de plans (1h30)}
+\paragraph{}
+Générez différents types de plans d'expériences à 50 points dans $[0,1]^4$:
+\begin{itemize}
+	\item tesselations centroidales de Voronoi
+	\item hypercubes latin
+	\item suites à faible discrépance
+	\item plan factoriel
+	\item points tirés aléatoirement suivant une loi uniforme
+\end{itemize}
+Vous pourrez bien entendu réutiliser les codes du dernier TP vous permettant de générer des plans. Si vous n'avez pas pu finir le précédent TP ou si vous doutez de vos implémentations, vous pouvez utiliser des packages dans lesquelles ces plans ou ces critères sont déjà implémentés : \emph{DiceDesign} pour les LHS et \emph{randtoolbox} pour les suites à faible discrépance. N'hésitez pas à faire des recherches de votre coté pour trouver d'autres packages et tester d'autres types de plans d'expériences.
+
+\paragraph{}
+En ce qui concerne les plans LHS, il est conseillé de chercher à les optimiser suivant l'une de ces trois approches (de complexité croissante) : \emph{a)} générer un grand nombre de LHS et choisir le meilleur au vu d'un critère, \emph{b)} appliquer un algorithme d'échange et accepter chaque modification uniquement si elle améliore le plan et \emph{c)} appliquer un algorithme de recuit simulé (acceptation des échanges détériorant le plan avec une certaine probabilité, cette approche est déjà codée dans le package \emph{DiceDesign}). 
+
+\paragraph{}
+Comparez les performances des différents plans que vous avez générés au vu de différents critères (discrepance, maximin et minimax, IMSE) et représentations graphiques (histogramme des marginales, pairs, ...). Comme pour les plans d'expériences, vous pouvez utiliser des packages pour lesquels ces critères sont implémentés (par exemple, les critères \emph{discrépance} et \emph{maximin} sont disponibles avec \emph{DiceDesign}).
+
+\paragraph{}
+Arrêtez votre choix sur le plan qui vous semble être le meilleur et détaillez dans votre rapport les éléments vous ayant conduit à faire ce choix.
+
+\subsection*{Réalisation des expériences (1:30)}
+\paragraph{}
+Effectuez une transformation linéaire sur votre plan d'expérience, afin d'obtenir des valeurs qui couvrent l'espace des valeurs possibles des paramètres : 
+\begin{equation*}
+20  \leq w_w \leq 50 \, , \qquad 30 \leq t_l \leq 75 \, , \qquad 50   \leq w_l \leq 80 \, , \qquad -25  \leq \theta \leq 25 \, .
+\end{equation*}
+\emph{Sauvegardez votre plan d'expérience} (sous forme de \emph{.csv} par exemple). Il vous sera indispensable lors des prochaines séances.
+
+\paragraph{}
+Les patrons des hélicoptères associé à un plan d'expérience peuvent être obtenus grâce à aux fonctions contenues dans le script script \texttt{doe2pdf.R} (disponible sur CAMPUS). Après avoir chargé le package \texttt{tikzDevice} et exécuté le contenu du script \texttt{doe2pdf.R}, vous pourrez utiliser la fonction \texttt{drawHelicopters} qui prend en entrée 
+\begin{itemize}
+	\item le plan d'expérience (matrice $n \times 4$). Les colonnes doivent correspondre à l'ordre $(w_w,w_l,t_l,\theta)$, et les valeurs doivent être entre bornes min et max associées à chaque variable
+	\item le nom du groupe (chaîne de caractère). Attention à ne pas utiliser de caractères spéciaux en LaTeX.
+\end{itemize}
+et qui génère un fichier pdf dans le répertoire de travail.
+
+\paragraph{}
+Imprimer les hélicoptères, assemblez les et réalisez les expériences : chronométrez 2 lancers pour chaque hélicoptère lâché depuis le niveau 2 de l'Espace Fauriel (hauteur de la rambarde) jusqu'au sol au niveau 0. 
+
+\paragraph{}
+Si le temps le permet, repérez les mesures aberrantes ou de forte variance et effectuez des lancers supplémentaires.
+
+\subsubsection*{Conseils}
+\begin{itemize}
+ \item Soyez rigoureux sur le pliage des hélicoptères
+ \item Attention à lâcher les hélicoptères de la même manière et sans déséquilibre initial.
+ \item Ne traînez pas !
+\end{itemize}
+
+\end{document}
