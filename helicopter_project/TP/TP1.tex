@@ -1,74 +1,69 @@
 \documentclass[a4paper,10pt]{article}
 
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{color}
-\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[francais]{babel}
-\usepackage[latin1]{inputenc}
-%\usepackage{fullpage}
-\usepackage{verbatim}
-\usepackage{fancyvrb}
+\usepackage{amsmath}
 \usepackage[top=3cm, bottom=3cm, left=3cm , right=3cm]{geometry}
 
 \renewcommand{\baselinestretch}{1.1}
 
-\title{\vspace{-1cm} TP1 Projet hélicoptère : plans remplissant l'espace (3h)}
+\title{\vspace{-1cm} TP1 Projet hÃ©licoptÃ¨re : plans remplissant l'espace (3h)}
 \author{Mines Saint-\'Etienne, majeure Data Science,  2016\:-\:2017 }
 \date{}
 
 \begin{document}
 \maketitle
-L'objectif de cette matinée est d'obtenir un bon plan d'expérience à 50 points et de réaliser les expériences. Pensez à vous organiser et à travailler en parallèle au sein des groupes.
+L'objectif de cette matinÃ©e est d'obtenir un bon plan d'expÃ©rience Ã  50 points et de rÃ©aliser les expÃ©riences. Pensez Ã  vous organiser et Ã  travailler en parallÃ¨le au sein des groupes.
 
 \subsection*{Construction de plans (1h30)}
 \paragraph{}
-Générez différents types de plans d'expériences à 50 points dans $[0,1]^4$:
+GÃ©nÃ©rez diffÃ©rents types de plans d'expÃ©riences Ã  50 points dans $[0,1]^4$:
 \begin{itemize}
 	\item tesselations centroidales de Voronoi
 	\item hypercubes latin
-	\item suites à faible discrépance
+	\item suites Ã  faible discrÃ©pance
 	\item plan factoriel
-	\item points tirés aléatoirement suivant une loi uniforme
+	\item points tirÃ©s alÃ©atoirement suivant une loi uniforme
 \end{itemize}
-Vous pourrez bien entendu réutiliser les codes du dernier TP vous permettant de générer des plans. Si vous n'avez pas pu finir le précédent TP ou si vous doutez de vos implémentations, vous pouvez utiliser des packages dans lesquelles ces plans ou ces critères sont déjà implémentés : \emph{DiceDesign} pour les LHS et \emph{randtoolbox} pour les suites à faible discrépance. N'hésitez pas à faire des recherches de votre coté pour trouver d'autres packages et tester d'autres types de plans d'expériences.
+Vous pouvez bien entendu rÃ©utiliser les codes du dernier TP vous permettant de gÃ©nÃ©rer des plans. Si vous n'avez pas pu finir le prÃ©cÃ©dent TP ou si vous doutez de vos implÃ©mentations, vous pouvez utiliser des packages dans lesquelles ces plans ou ces critÃ¨res sont dÃ©jÃ  implÃ©mentÃ©s : \emph{DiceDesign} pour les LHS et \emph{randtoolbox} pour les suites Ã  faible discrÃ©pance. N'hÃ©sitez pas Ã  faire des recherches de votre cotÃ© pour trouver d'autres packages et tester d'autres types de plans d'expÃ©riences.
 
 \paragraph{}
-En ce qui concerne les plans LHS, il est conseillé de chercher à les optimiser suivant l'une de ces trois approches (de complexité croissante) : \emph{a)} générer un grand nombre de LHS et choisir le meilleur au vu d'un critère, \emph{b)} appliquer un algorithme d'échange et accepter chaque modification uniquement si elle améliore le plan et \emph{c)} appliquer un algorithme de recuit simulé (acceptation des échanges détériorant le plan avec une certaine probabilité, cette approche est déjà codée dans le package \emph{DiceDesign}). 
+En ce qui concerne les plans LHS, il est conseillÃ© de chercher Ã  les optimiser suivant l'une de ces trois approches (de complexitÃ© croissante) : \emph{a)} gÃ©nÃ©rer un grand nombre de LHS et choisir le meilleur au vu d'un critÃ¨re, \emph{b)} appliquer un algorithme d'Ã©change et accepter chaque modification uniquement si elle amÃ©liore le plan et \emph{c)} appliquer un algorithme de recuit simulÃ© (acceptation des Ã©changes dÃ©tÃ©riorant le plan avec une certaine probabilitÃ©, cette approche est dÃ©jÃ  codÃ©e dans le package \emph{DiceDesign}). 
 
 \paragraph{}
-Comparez les performances des différents plans que vous avez générés au vu de différents critères (discrepance, maximin et minimax, IMSE) et représentations graphiques (histogramme des marginales, pairs, ...). Comme pour les plans d'expériences, vous pouvez utiliser des packages pour lesquels ces critères sont implémentés (par exemple, les critères \emph{discrépance} et \emph{maximin} sont disponibles avec \emph{DiceDesign}).
+Comparez les performances des diffÃ©rents plans que vous avez gÃ©nÃ©rÃ©s au vu de diffÃ©rents critÃ¨res (discrepance, maximin minimax et IMSE) et reprÃ©sentations graphiques (histogramme des distributions marginales, pairs, ...). Comme pour les plans d'expÃ©riences, vous pouvez utiliser des packages pour lesquels ces critÃ¨res sont implÃ©mentÃ©s (par exemple, les critÃ¨res \emph{discrÃ©pance} et \emph{maximin} sont disponibles dans \emph{DiceDesign}).
 
 \paragraph{}
-Arrêtez votre choix sur le plan qui vous semble être le meilleur et détaillez dans votre rapport les éléments vous ayant conduit à faire ce choix.
+ArrÃªtez votre choix sur le plan qui vous semble Ãªtre le meilleur et dÃ©taillez dans votre rapport les Ã©lÃ©ments vous ayant conduit Ã  faire ce choix.
 
-\subsection*{Réalisation des expériences (1:30)}
+\subsection*{RÃ©alisation des expÃ©riences (1h30)}
 \paragraph{}
-Effectuez une transformation linéaire sur votre plan d'expérience, afin d'obtenir des valeurs qui couvrent l'espace des valeurs possibles des paramètres : 
+Effectuez une transformation linÃ©aire sur votre plan d'expÃ©rience, afin d'obtenir des valeurs qui couvrent l'espace des valeurs possibles des paramÃ¨tres : 
 \begin{equation*}
 20  \leq w_w \leq 50 \, , \qquad 30 \leq t_l \leq 75 \, , \qquad 50   \leq w_l \leq 80 \, , \qquad -25  \leq \theta \leq 25 \, .
 \end{equation*}
-\emph{Sauvegardez votre plan d'expérience} (sous forme de \emph{.csv} par exemple). Il vous sera indispensable lors des prochaines séances.
+\emph{Sauvegardez votre plan d'expÃ©rience} (sous forme de \emph{.csv} par exemple). Il vous sera indispensable lors des prochaines sÃ©ances.
 
 \paragraph{}
-Les patrons des hélicoptères associé à un plan d'expérience peuvent être obtenus grâce à aux fonctions contenues dans le script script \texttt{doe2pdf.R} (disponible sur CAMPUS). Après avoir chargé le package \texttt{tikzDevice} et exécuté le contenu du script \texttt{doe2pdf.R}, vous pourrez utiliser la fonction \texttt{drawHelicopters} qui prend en entrée 
+Les patrons des hÃ©licoptÃ¨res associÃ©s Ã  un plan d'expÃ©rience peuvent Ãªtre obtenus grÃ¢ce aux fonctions contenues dans le script \emph{doe2pdf.R} (disponible sur CAMPUS). AprÃ¨s avoir chargÃ© le package \emph{tikzDevice} et exÃ©cutÃ© le contenu du script \emph{doe2pdf.R}, vous pourrez utiliser la fonction \emph{drawHelicopters} qui prend en entrÃ©e 
 \begin{itemize}
-	\item le plan d'expérience (matrice $n \times 4$). Les colonnes doivent correspondre à l'ordre $(w_w,w_l,t_l,\theta)$, et les valeurs doivent être entre bornes min et max associées à chaque variable
-	\item le nom du groupe (chaîne de caractère). Attention à ne pas utiliser de caractères spéciaux en LaTeX.
+	\item le plan d'expÃ©rience (matrice $n \times 4$). Les colonnes doivent correspondre Ã  l'ordre $(w_w,w_l,t_l,\theta)$, et les valeurs doivent Ãªtre entre bornes min et max associÃ©es Ã  chaque variable
+	\item le nom du groupe (chaÃ®ne de caractÃ¨re, attention Ã  ne pas utiliser de caractÃ¨res spÃ©ciaux en LaTeX)
 \end{itemize}
-et qui génère un fichier pdf dans le répertoire de travail.
+et qui gÃ©nÃ¨re un fichier pdf dans le rÃ©pertoire de travail.
 
 \paragraph{}
-Imprimer les hélicoptères, assemblez les et réalisez les expériences : chronométrez 2 lancers pour chaque hélicoptère lâché depuis le niveau 2 de l'Espace Fauriel (hauteur de la rambarde) jusqu'au sol au niveau 0. 
+Imprimez les hÃ©licoptÃ¨res, assemblez les et rÃ©alisez les expÃ©riences : chronomÃ©trez 2 lancers pour chaque hÃ©licoptÃ¨re lÃ¢chÃ© depuis le niveau 2 de l'Espace Fauriel (hauteur de la rambarde) jusqu'au sol au niveau 0. 
 
 \paragraph{}
-Si le temps le permet, repérez les mesures aberrantes ou de forte variance et effectuez des lancers supplémentaires.
+Si le temps le permet, repÃ©rez les mesures aberrantes ou de forte variance et effectuez des lancers supplÃ©mentaires.
 
 \subsubsection*{Conseils}
 \begin{itemize}
- \item Soyez rigoureux sur le pliage des hélicoptères
- \item Attention à lâcher les hélicoptères de la même manière et sans déséquilibre initial.
- \item Ne traînez pas !
+ \item Soyez rigoureux sur le pliage des hÃ©licoptÃ¨res
+ \item Attention Ã  lÃ¢cher les hÃ©licoptÃ¨res de la mÃªme maniÃ¨re et sans dÃ©sÃ©quilibre initial.
+ \item Ne traÃ®nez pas !
 \end{itemize}
 
 \end{document}

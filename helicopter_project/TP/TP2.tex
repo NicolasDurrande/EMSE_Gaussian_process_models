@@ -1,52 +1,50 @@
 \documentclass[a4paper,10pt]{article}
 
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{color}
-\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[francais]{babel}
-\usepackage[latin1]{inputenc}
-%\usepackage{fullpage}
-\usepackage{verbatim}
-\usepackage{fancyvrb}
+\usepackage{amsmath}
 \usepackage[top=3cm, bottom=3cm, left=3cm , right=3cm]{geometry}
 
 \renewcommand{\baselinestretch}{1.1}
 
-\title{\vspace{-1cm} TP2 Projet hélicoptère : construction de modèles de krigeage}
+\title{\vspace{-1cm} TP2 Projet hÃ©licoptÃ¨re : construction de modÃ¨les de krigeage}
 \author{Mines Saint-\'Etienne, majeure Data Science,  2016\:-\:2017 }
 \date{}
 
 \begin{document}
 \maketitle
-Le but de ce TP est de construire un modèle statistique du temps de chute à partir des expériences qui ont été réalisées. Le meilleur modèle obtenu sera utilisé pour les séances suivantes.
+Le but de ce TP est de construire un modÃ¨le statistique du temps de chute Ã  partir des expÃ©riences qui ont Ã©tÃ© rÃ©alisÃ©es. Le meilleur modÃ¨le obtenu sera utilisÃ© pour les sÃ©ances suivantes.
 
-\subsection*{Réflexions préliminaires}
-Avant de vous lancer dans la création de modèles, effectuez une première analyse des données. De plus, prenez le temps de vous poser des questions telles que :
+\subsection*{RÃ©flexions prÃ©liminaires}
+Avant de vous lancer dans la crÃ©ation de modÃ¨les, effectuez une premiÃ¨re analyse des donnÃ©es. De plus, prenez le temps de vous poser des questions telles que :
 \begin{itemize}
-	\item Un pré-traitement des données est-il nécessaire (données aberrantes, ...) ?
- 	\item Est-il pertinent de changer la paramétrisation du problème ? 
+	\item Un prÃ©-traitement des donnÃ©es est-il nÃ©cessaire (donnÃ©es aberrantes, transformation log, ...) ?
+ 	\item Est-il pertinent de changer la paramÃ©trisation du problÃ¨me ? 
  	\item ...
 \end{itemize} 
 
-\subsection*{Construction de modèles de krigeage (1h30)}
+\subsection*{Construction de modÃ¨les de krigeage (1h30)}
 
-Le package \texttt{DiceKriging} vous permettra de gagner un temps précieux. La construction de modèles se fait alors à l'aide de la fonction \texttt{km}, et les prédictions à l'aide de la fonction  \texttt{predict}. De plus, ce package possède déjà des outils de diagnostic des modèles (\texttt{plot(model), summary(model)}) et il permet d'estimer les paramètres des noyaux par maximum de vraisemblance ou par validation croisée. Par ailleurs, le package \emph{DiceView} peut être utile pour obtenir des réprésentations graphiques de modèles.
-
-\paragraph{}
-Comparez différents modèles en essayant différents noyaux et différentes tendances. Ces modèles permettent-ils d'obtenir de meilleurs résultats qu'un simple modèle de régression linéaire ?
+Le package \texttt{DiceKriging} vous permettra de gagner un temps prÃ©cieux. La construction de modÃ¨les se fait alors Ã  l'aide de la fonction \texttt{km}, et les prÃ©dictions Ã  l'aide de la fonction  \texttt{predict}. De plus, ce package possÃ¨de dÃ©jÃ  des outils de diagnostic des modÃ¨les (\texttt{plot(model), summary(model)}) et il permet d'estimer les paramÃ¨tres des noyaux par maximum de vraisemblance ou par validation croisÃ©e. Par ailleurs, le package \texttt{DiceView} peut Ãªtre utile pour obtenir des reprÃ©sentations graphiques de modÃ¨les.
 
 \paragraph{}
-Choisissez le modèle qui vous semble le mieux adapté et donnez des arguments vous ayant ammenés à faire ce choix. Attention, cela a-t-il du sens d'appliquer des méthodes \emph{leave-one-out} pour juger de la qualité d'un modèle ?
-Si le temps le permet, analysez la robustesse des estimations des paramètres des noyaux.
+Comparez diffÃ©rents modÃ¨les en essayant diffÃ©rents noyaux et diffÃ©rentes tendances. Ces modÃ¨les permettent-ils d'obtenir de meilleurs rÃ©sultats qu'un simple modÃ¨le de rÃ©gression linÃ©aire ?
 
 \paragraph{}
-Interprétez les valeurs des paramètres du modèle retenu (bruit d'observation, portées, ...). Si vous choisissez d'utiliser des termes de tendance, peuvent-ils s'interpréter ?
+Choisissez le modÃ¨le qui vous semble le mieux adaptÃ© et donnez des arguments vous ayant amenÃ©s Ã  faire ce choix. Attention, cela a-t-il du sens d'appliquer des mÃ©thodes \emph{leave-one-out} pour juger de la qualitÃ© d'un modÃ¨le ?
+Si le temps le permet, analysez la robustesse des estimations des paramÃ¨tres des noyaux.
 
-\subsection*{Analyse de sensibilité (1h30)}
 \paragraph{}
-Appliquez les méthodes vues en cours d'analyse de sensibilité pour représenter les effets principaux et calculez les indices de Sobol. D'après le modèle, quelles sont les variables (et les interactions) qui sont influentes ? Cela peut-il s'interpréter physiquement ?
+InterprÃ©tez les valeurs des paramÃ¨tres du modÃ¨le retenu (bruit d'observation, portÃ©es, ...). Si vous choisissez d'utiliser des termes de tendance, peuvent-ils s'interprÃ©ter ?
 
+\subsection*{Analyse de sensibilitÃ© (1h30)}
+\paragraph{}
+Appliquez les mÃ©thodes vues en cours d'analyse de sensibilitÃ© pour reprÃ©senter les effets principaux et calculez les indices de Sobol. D'aprÃ¨s le modÃ¨le, quelles sont les variables (et les interactions) qui sont influentes ? Cela peut-il s'interprÃ©ter physiquement ?
+
+\subsection*{RÃ©gion contenant l'optimum}
+\paragraph{}
+Ã€ partir du modÃ¨le dont vous disposez, Ãªtes vous capable d'identifier une rÃ©gion contenant \emph{a priori} l'optimum ? Quelle mÃ©thode pouvez-vous proposer pour enrichir le plan d'expÃ©riences dans cette rÃ©gion ? Si le temps le permet, rÃ©alisez 10 nouvelles expÃ©riences pour affiner le modÃ¨le dans cette rÃ©gion d'intÃ©rÃªt.
 \end{document}
 
 
@@ -70,8 +68,8 @@ Appliquez les méthodes vues en cours d'analyse de sensibilité pour représenter l
 \section*{Aide : fonctions et packages \texttt{R} utiles}
 
 \begin{itemize}
-	\item construire un modèle de krigeage : package \texttt{DiceKriging}, fonctions \texttt{km, predict.km})	
-	\item pour l'analyse des modèles : \texttt{plot(model), print(model), summary(model)}
+	\item construire un modÃ¨le de krigeage : package \texttt{DiceKriging}, fonctions \texttt{km, predict.km})	
+	\item pour l'analyse des modÃ¨les : \texttt{plot(model), print(model), summary(model)}
 \end{itemize}
 
 \end{document}
@@ -80,17 +78,17 @@ Appliquez les méthodes vues en cours d'analyse de sensibilité pour représenter l
 \begin{Verbatim}[frame=single,fontsize==\tiny]
 generateCVT <- function(npts, dim, nite)
 \end{Verbatim}
-Le plan d'expériences s'écrira comme une matrice de $npts$ lignes et $dim$ colonnes.
+Le plan d'expÃ©riences s'Ã©crira comme une matrice de $npts$ lignes et $dim$ colonnes.
 
 \subsection{Hypercubes latins}
-Créez un script R permettant de générer un hypercube latin aléatoire (normalisé) pour un nombre quelconque de points et une dimension quelconque.
+CrÃ©ez un script R permettant de gÃ©nÃ©rer un hypercube latin alÃ©atoire (normalisÃ©) pour un nombre quelconque de points et une dimension quelconque.
 
 \begin{Verbatim}[frame=single,fontsize==\tiny]
 generateLHS <- function(npts, dim)
 \end{Verbatim}
 
-\subsection{Critères}
-Créez un script R permettant de calculer le critère maximin d'un plan. Le script fournira également en sortie la matrice des interdistances (taille $npts \times npts$). Attention à éviter les calculs redondants (la matrice est symétrique !).
+\subsection{CritÃ¨res}
+CrÃ©ez un script R permettant de calculer le critÃ¨re maximin d'un plan. Le script fournira Ã©galement en sortie la matrice des interdistances (taille $npts \times npts$). Attention Ã  Ã©viter les calculs redondants (la matrice est symÃ©trique !).
 
 \begin{Verbatim}[frame=single,fontsize==\tiny]
 evalMinDist <- function(X)
@@ -98,45 +96,45 @@ evalMinDist <- function(X)
 return( list(minDist = d, allDist = D) ) }
 \end{Verbatim}
 
-\subsection{Hypercubes latins optimisés}
-Utilisez le script précédent pour construire des hypercubes latins optimisés. Selon votre vitesse d'avancement, vous coderez au choix :
+\subsection{Hypercubes latins optimisÃ©s}
+Utilisez le script prÃ©cÃ©dent pour construire des hypercubes latins optimisÃ©s. Selon votre vitesse d'avancement, vous coderez au choix :
 \begin{itemize}
- \item une recherche aléatoire pure : on génère un certain nombre de plans et on garde le meilleur ;
- \item un algorithme d'échange simple : on génère un plan, puis on propose des échanges aléatoires qu'on accepte s'ils améliorent le critère ;
- \item un algorithme d'échange avec recuit simulé.
+ \item une recherche alÃ©atoire pure : on gÃ©nÃ¨re un certain nombre de plans et on garde le meilleur ;
+ \item un algorithme d'Ã©change simple : on gÃ©nÃ¨re un plan, puis on propose des Ã©changes alÃ©atoires qu'on accepte s'ils amÃ©liorent le critÃ¨re ;
+ \item un algorithme d'Ã©change avec recuit simulÃ©.
 \end{itemize}
-Dans les 2 derniers cas, les performances peuvent être améliorées en choisissant pour l'échange un point critique pour le critère.
+Dans les 2 derniers cas, les performances peuvent Ãªtre amÃ©liorÃ©es en choisissant pour l'Ã©change un point critique pour le critÃ¨re.
 
 \section{Analyse}
-Générez et comparez des plans CVT, LHS quelconque et LHS optimisé pour les configurations suivantes :
+GÃ©nÃ©rez et comparez des plans CVT, LHS quelconque et LHS optimisÃ© pour les configurations suivantesÂ :
 \begin{itemize}
  \item dimension 2, 10 points ; 
  \item dimension 4, 40 points ;
  \item dimension 10, 150 points.
 \end{itemize}
 
-Observez en particulier les différences sur :
+Observez en particulier les diffÃ©rences sur :
 \begin{itemize}
- \item la répartition sur les marginales de dimension 1 (histogrammes)
- \item la répartition sur les marginales de dimension 2 (fonction \texttt{pairs})
- \item la valeur du critère \textit{maximin}, éventuellement l'histogramme des interdistances.
+ \item la rÃ©partition sur les marginales de dimension 1 (histogrammes)
+ \item la rÃ©partition sur les marginales de dimension 2 (fonction \texttt{pairs})
+ \item la valeur du critÃ¨re \textit{maximin}, Ã©ventuellement l'histogramme des interdistances.
 \end{itemize}
-Peut-on déterminer facilement les ``meilleurs'' plans ? Essayez éventuellement d'autres critères / visualisations afin de faciliter votre choix.
+Peut-on dÃ©terminer facilement les ``meilleurs'' plans ? Essayez Ã©ventuellement d'autres critÃ¨res / visualisations afin de faciliter votre choix.
 
-\section{Préparation du projet : plan de taille $4 \times 40$}
-Vous aurez besoin, pour le projet, d'un plan d'expériences de 40 points en dimension 4. Sauvegardez le ``meilleur'' plan que vous ayez généré selon la méthode de votre choix.
-\textbf{Ce plan est nécessaire pour la suite des TPs}.
+\section{PrÃ©paration du projet : plan de taille $4 \times 40$}
+Vous aurez besoin, pour le projet, d'un plan d'expÃ©riences de 40 points en dimension 4. Sauvegardez le ``meilleur'' plan que vous ayez gÃ©nÃ©rÃ© selon la mÃ©thode de votre choix.
+\textbf{Ce plan est nÃ©cessaire pour la suite des TPs}.
 
-NB : Les éléments vous ayant conduit à choisir votre plan doivent figurer dans le rapport.
+NB : Les Ã©lÃ©ments vous ayant conduit Ã  choisir votre plan doivent figurer dans le rapport.
 
 \subsection*{Aide : fonctions et packages \texttt{R} utiles}
 
 \begin{itemize}
-	\item pour générer des permutations : \texttt{sample.int}
-	\item pour les modèles linéaires : \texttt{lm}
+	\item pour gÃ©nÃ©rer des permutations : \texttt{sample.int}
+	\item pour les modÃ¨les linÃ©aires : \texttt{lm}
 	\item pour le krigeage : package \texttt{DiceKriging} (fonctions \texttt{km, predict.km})	
-	\item pour la représentation 3D : \texttt{scatterplot3d} (dans \texttt{library("scatterplot3d")}), \texttt{persp}, \texttt{contour}
-	\item pour l'analyse des modèles : \texttt{plot(model), print(model), summary(model)}
+	\item pour la reprÃ©sentation 3D : \texttt{scatterplot3d} (dans \texttt{library("scatterplot3d")}), \texttt{persp}, \texttt{contour}
+	\item pour l'analyse des modÃ¨les : \texttt{plot(model), print(model), summary(model)}
 \end{itemize}
 
 \end{document}
