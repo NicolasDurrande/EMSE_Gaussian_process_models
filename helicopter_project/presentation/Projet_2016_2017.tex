@@ -1,17 +1,11 @@
 \documentclass[a4paper,10pt]{article}
 
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{color}
-\usepackage{amsmath}
 \usepackage[utf8]{inputenc}
-\usepackage[frenchb]{babel}
-% \usepackage[latin1]{inputenc}
-\usepackage{fullpage}
-\usepackage{verbatim}
-\usepackage{fancyvrb}
-\usepackage[top=2cm, bottom=2cm, left=2.5cm , right=2.5cm]{geometry}
-
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{amsmath}
+\usepackage[top=3cm, bottom=3cm, left=2cm , right=2cm]{geometry}
+\usepackage{graphicx}
 
 \title{\vspace{-2cm}Projet optimisation d'un hélicoptère en papier}
 \author{Mines Saint-\'Etienne, Data Science,  2016\:-\:2017 }
@@ -39,7 +33,7 @@ Le temps de vol d'un hélicoptère, $T$,  peut être considéré comme une varia
 Des contraintes de bornes sont appliquées sur les variables afin que l'hélicoptère puisse être découpé à partir d'une feuille A4. Les contraintes sur les variables sont les suivantes
 
 \begin{equation*}
-20  \leq w_w \leq 50 \, , \qquad 30 \leq t_l \leq 75 \, , \qquad 50   \leq w_l \leq 80 \, , \qquad -25  \leq \theta \leq 25 \, .
+20  \leq w_w \leq 50 \, , \qquad 30 \leq w_l \leq 75 \, , \qquad 50   \leq t_l \leq 80 \, , \qquad -15  \leq \theta \leq 25 \, .
 \end{equation*}
 
 \subsection*{Déroulement}
@@ -56,9 +50,9 @@ Le projet se déroulera sur 6 séances de 1h30 :
  \hline
  3 & 19/12, 13h30 & Construction et validation d'un premier modèle de krigeage\\
  \hline
- 4 & 19/12, 15h15 & Analyse du modèle obtenu, re-paramétrisation éventuelle du problème\\
+ 4 & 19/12, 15h15 & Analyse du modèle obtenu, raffinage du plan d'expérience dans le domaine d'intérêt\\
   \hline
- 5 & 20/12, 8h15 & Recherche de la solution du problème à l'aide de l'algorithme EGO\\
+ 5 & 20/12, 8h15 & Analyse dde sensibilité et recherche de l'hélicoptère optimal l'aide de l'algorithme EGO\\
   \hline
  6 & 20/12, 10h & Finalisation du rapport
 \end{tabular}

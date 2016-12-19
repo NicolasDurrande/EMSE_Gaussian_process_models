@@ -73,9 +73,9 @@ drawHelicopters <- function(X,groupName){
 ###########
 # # example
 # Ww_bounds = c(20, 50)
-# Wl_bounds = c(30, 65)
-# Tl_bounds = c(50, 85)
-# alpha_bounds = c(-30, 30)
+# Wl_bounds = c(30, 75)
+# Tl_bounds = c(50, 80)
+# alpha_bounds = c(-15, 25)
 # 
 # # DoE
 # X = expand.grid(Ww_bounds,Wl_bounds,Tl_bounds,alpha_bounds)

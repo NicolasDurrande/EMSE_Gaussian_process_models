@@ -35,15 +35,14 @@ En ce qui concerne les plans LHS, il est conseillé de chercher à les optimiser
 Comparez les performances des différents plans que vous avez générés au vu de différents critères (discrepance, maximin minimax et IMSE) et représentations graphiques (histogramme des distributions marginales, pairs, ...). Comme pour les plans d'expériences, vous pouvez utiliser des packages pour lesquels ces critères sont implémentés (par exemple, les critères \emph{discrépance} et \emph{maximin} sont disponibles dans \emph{DiceDesign}).
 
 \paragraph{}
-Arrêtez votre choix sur le plan qui vous semble être le meilleur et détaillez dans votre rapport les éléments vous ayant conduit à faire ce choix.
+Arrêtez votre choix sur le plan qui vous semble être le meilleur et détaillez dans votre rapport les éléments vous ayant conduit à faire ce choix. \emph{Sauvegardez votre plan d'expérience} (sous forme de \emph{.csv} par exemple). Il vous sera indispensable lors des prochaines séances.
 
 \subsection*{Réalisation des expériences (1h30)}
 \paragraph{}
 Effectuez une transformation linéaire sur votre plan d'expérience, afin d'obtenir des valeurs qui couvrent l'espace des valeurs possibles des paramètres : 
 \begin{equation*}
-20  \leq w_w \leq 50 \, , \qquad 30 \leq t_l \leq 75 \, , \qquad 50   \leq w_l \leq 80 \, , \qquad -25  \leq \theta \leq 25 \, .
+20  \leq w_w \leq 50 \, , \qquad 30 \leq w_l \leq 75 \, , \qquad 50   \leq t_l \leq 80 \, , \qquad -15  \leq \theta \leq 25 \, .
 \end{equation*}
-\emph{Sauvegardez votre plan d'expérience} (sous forme de \emph{.csv} par exemple). Il vous sera indispensable lors des prochaines séances.
 
 \paragraph{}
 Les patrons des hélicoptères associés à un plan d'expérience peuvent être obtenus grâce aux fonctions contenues dans le script \emph{doe2pdf.R} (disponible sur CAMPUS). Après avoir chargé le package \emph{tikzDevice} et exécuté le contenu du script \emph{doe2pdf.R}, vous pourrez utiliser la fonction \emph{drawHelicopters} qui prend en entrée 
