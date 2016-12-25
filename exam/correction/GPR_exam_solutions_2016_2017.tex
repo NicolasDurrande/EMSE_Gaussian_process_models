@@ -14,6 +14,7 @@
 
 \newcommand{\var}{\mbox{var}}
 \newcommand{\E}{\mbox{E}}
+\newcommand{\cov}{\mbox{cov}}
 \newcommand{\Disk}{\mathcal{D}}   
 
 \begin{document}
@@ -128,7 +129,7 @@ This implies that $\var [m(X)] = -\beta_{0,0}^2 + \sum_{i,\ j} \beta_{i,j}^2$ an
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Exercise 4 : Kriging models \hfill [2 pts]}
+\subsection*{Exercise 4 : Kriging models}
 
 \paragraph{}
 The \emph{model 1} has some observation noise but no trend so it must be \emph{model C}
@@ -146,24 +147,24 @@ The \emph{model 4} has an exponential covariance function, as for \emph{model E}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Exercise 5: Kernel design}
 
-\begin{align*}
- k(x,y)= k_0(x,y) + k_1(x,y) + k_2(x,y) + k_3(x,y)
-\end{align*}
-\begin{align*}
- \text{\qquad \qquad where \qquad} k_0(x,y)&=\sigma_0^2   &  k_1(x,y)&=\sigma_1^2 xy \\
- k_2(x,y)&= \sigma_2^2 x^2y^2 & k_3(x,y)&=\sigma_3^2 \exp \left(-\frac{(x-y)^2}{2 \theta^2} \right) .
-\end{align*}
-
 \begin{enumerate}[label=Q\arabic*.]
-\item  Show that $k$ is a valid covariance function. You can use the fact that the kernels in Table 1.1 from page 14 of the lecture notes are valid covariance functions without proving it. 
-\item {[1 pt]} Write a \emph{R} function (you may choose another language if you prefer) that takes as inputs two vectors (say $a$, $b$) and a variance parameter $s2$ and that returns the covariance matrix with general term $k_2(a_i,b_j)$.
-\item {[2 pts]} Let $Z$ be a centred Gaussian process with covariance $k$. Show carefully that $Z$ has the same distribution as the sum of 4 independent Gaussian processes:
-\begin{equation*}
-Z_0 \sim \mathcal{N}(0,k_0)\, ,\ 
-Z_1 \sim \mathcal{N}(0,k_1)\, ,\ 
-Z_2 \sim \mathcal{N}(0,k_2)\text{ and } 
-Z_3 \sim \mathcal{N}( 0,k_3).
-\end{equation*}
+\item  We already know from the lecture notes that $k_0$, $k_1$ and $k_3$ are valid covariance functions, and $k_2$ is also a valid kernel since it is the composition of a linear kernel $\sigma_2^2 xy$ with the function $x \mapsto x^2 $. Since $k$ is a sum of covariance functions, it is also symmetric and positive semi-definite.  
+\item The following \emph{R} code will return the covariance matrices for $k_2$
+\begin{Verbatim}
+	k2 <- function(a,b,s2=1){
+	    s2*outer(a^2,b^2)
+	}
+\end{Verbatim}
+Note the default value of 1 for the parameter $s2$, which allows to call the function without specifying any value for this parameter.
+\item The sum of 4 independent Gaussian processes is also a GP, so it is sufficient to show that $Z$ and $Z_s = Z_0+Z_1+Z_2+Z_3$ have the same mean and covariance function. This is straightforward using the linearity of the expectation and the independence of the $Z_i$:
+\begin{align*}
+\E [Z_s(x)] &= \E [Z_0(x) + Z_1(x) + Z_2(x) + Z_3(x)] \\
+&= \E[Z_0(x)] + \E[Z_1(x)] + \E[Z_2(x)] + \E[Z_3(x)] \\
+&= 0 = \E[Z(x)]\\
+\cov [Z_s(x),Z_s(y)] &= \cov [ Z_0(x) + Z_1(x) + Z_2(x) + Z_3(x) , Z_0(y) + Z_1(y) + Z_2(y) + Z_3(y)]\\
+&= \cov [Z_0(x),Z_0(y)] + \dots + \cov [Z_3(x),Z_3(y)]\\
+&= k(x,y)
+\end{align*}
 Represent graphically (for $x \in [-1,1]$) a typical sample from each of this processes for the following parameters values: $\sigma_i^2 = 1$ and $\theta = 0.2$.
 \item {[1 pt]} let $(X,Y)$ be a set of $n$ observation points. What is the expression of the conditional mean and variance of $Z(x)$ given $Z(X)=F$. How does the mean function behaves when the prediction point $x$ is far away from the observations $X$?
 \item {[2 pts]} Show that the conditional mean writes as a sum of conditional mean functions : $m(x) = m_0 + \dots + m_3(x)$. According to this, what is the polynomial content $m_p$ of the mean function $m$? What is the conditional variance that can be associated to $m_p$?
