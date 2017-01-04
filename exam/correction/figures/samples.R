@@ -33,9 +33,9 @@ theta <- 0.2
 
 plotsamples <- function(fileName,Z,ylab){
   tikz(fileName, standAlone = TRUE, width=4, height=4)
-  par(mar=c(4.5,5,1.5,1.5),cex.axis=1.5,cex.lab=2)
+  par(mar=c(2.5,2.5,2.5,1.5),cex.axis=1.5,cex.lab=2)
   matplot(x,t(Z),type='l',lty=1,lwd=1.5,ylim=c(-3,3),
-         col=diverge_hcl(nrow(Z)),xlab='x',ylab=ylab)             
+         col=diverge_hcl(nrow(Z)),xlab='',ylab='',main=ylab,cex.main=2)             
   dev.off()
   tools::texi2dvi(fileName,pdf=T,clean=TRUE)
   file.remove(fileName)

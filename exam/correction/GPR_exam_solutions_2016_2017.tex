@@ -165,15 +165,46 @@ Note the default value of 1 for the parameter $s2$, which allows to call the fun
 &= \cov [Z_0(x),Z_0(y)] + \dots + \cov [Z_3(x),Z_3(y)]\\
 &= k(x,y)
 \end{align*}
-Represent graphically (for $x \in [-1,1]$) a typical sample from each of this processes for the following parameters values: $\sigma_i^2 = 1$ and $\theta = 0.2$.
-\item {[1 pt]} let $(X,Y)$ be a set of $n$ observation points. What is the expression of the conditional mean and variance of $Z(x)$ given $Z(X)=F$. How does the mean function behaves when the prediction point $x$ is far away from the observations $X$?
-\item {[2 pts]} Show that the conditional mean writes as a sum of conditional mean functions : $m(x) = m_0 + \dots + m_3(x)$. According to this, what is the polynomial content $m_p$ of the mean function $m$? What is the conditional variance that can be associated to $m_p$?
-\item[\textbf{bonus:}] Would we obtain the exact same model as $m$ if we were to construct a universal kriging model with kernel $k_3$ and a trend of the form $\beta_0 + \beta_1 x + \beta_2 x^2$?
+Typical examples of sample path are shown bellow:
+\begin{center}
+  \includegraphics[width=3.4cm]{figures/samplesZ0.pdf}
+  \includegraphics[width=3.4cm]{figures/samplesZ1.pdf} 
+  \includegraphics[width=3.4cm]{figures/samplesZ2.pdf} 
+  \includegraphics[width=3.4cm]{figures/samplesZ3.pdf}
+\end{center}
+\item As detailed in the lecture notes, the conditional mean and variance are:
+\begin{align*}
+	m(x) &=\E [Z(x)|Z(X)=F] = k(x,X) k(X,X)^{-1}F\\
+	v(x) &=\var [Z(x)|Z(X)=F] = k(x,x)- k(x,X) k(X,X)^{-1}k(X,x).
+\end{align*}
+If the prediction point $x$ is located far away from one observation point $X_i$, then
+\begin{align*}
+	k(x,X_i) &= \sigma_0^2 +\sigma_1^2 xX_i + \sigma_2^2 x^2X_i^2 + \sigma_3^2 \exp \left(-\frac{(x-X_i)^2}{2 \theta^2} \right)\\
+	 & \approx \sigma_0^2 +\sigma_1^2 xX_i + \sigma_2^2 x^2X_i^2 
+\end{align*}
+As a consequence, if the prediction point is far away from all observation points, the mean predictor is a linear combination of quadratic functions (each element of $k(x,X$ is a second order polynomial in $x$) so it behaves itself as a quadratic function. 
+\item We can expand $k(x,X)$ in the expression of $m$:
+\begin{align*}
+	m(x) &= k(x,X) k(X,X)^{-1}F\\
+	&= (k_0(x,X) + k_1(x,X) + k_2(x,X) + k_3(x,X) ) k(X,X)^{-1}F\\
+	&= \underbrace{k_0(x,X)k(X,X)^{-1}F}_{m_0} + \underbrace{k_1(x,X)k(X,X)^{-1}F}_{m_1(x)} \\
+	& \qquad \qquad + \underbrace{k_2(x,X)k(X,X)^{-1}F}_{m_2(x)} + \underbrace{k_3(x,X) k(X,X)^{-1}F}_{m_3(x)}.
+\end{align*}
+where $m_0$ is a constant, $m_1$ is linear and $m_2$ is quadratic. The polynomial component of $m$ is then
+\begin{align*}
+	m_p(x) = m_0 + m_1(x) + m_2(x) = (k_0(x,X) + k_1(x,X) + k_2(x,X)) k(X,X)^{-1}F.
+\end{align*}
+We can recognize here the conditional distribution of $Z_0 + Z_1(x) + Z_2(x)$ given $Z(X)=F$. The associated conditional variance is:
+\begin{align*}
+	v_p(x) &= \var [ Z_0 + Z_1(x) + Z_2(x) | Z(X)=F] \\
+	&= k_0(x,x) + k_1(x,x) + k_2(x,x) \\
+	& \qquad - (k_0(x,X) + k_1(x,X) + k_2(x,X)) k(X,X)^{-1} (k_0(X,x) + k_1(X,x) + k_2(X,x)).
+\end{align*}
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Exercise 6: Optimization \hfill [3 pts]}
+\subsection*{Exercise 6: Optimization}
 
 Consider a kriging model based on the design of experiments $X=(-0.2,0.2)$ and the vector of observations $Y=(-0.2,0.2)$. We will consider fixed values for the variance and length-scale parameters: $\sigma^2=1$ and $\theta=0.2$.
 \begin{enumerate}[label=Q\arabic*.]
