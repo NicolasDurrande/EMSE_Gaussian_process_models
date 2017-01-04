@@ -162,7 +162,7 @@ Note the default value of 1 for the parameter $s2$, which allows to call the fun
 &= \E[Z_0(x)] + \E[Z_1(x)] + \E[Z_2(x)] + \E[Z_3(x)] \\
 &= 0 = \E[Z(x)]\\
 \cov [Z_s(x),Z_s(y)] &= \cov [ Z_0(x) + Z_1(x) + Z_2(x) + Z_3(x) , Z_0(y) + Z_1(y) + Z_2(y) + Z_3(y)]\\
-&= \cov [Z_0(x),Z_0(y)] + \dots + \cov [Z_3(x),Z_3(y)]\\
+&= \cov [Z_0(x),Z_0(y)] + \dots + \cov [Z_3(x),Z_3(y)] \text{\qquad (by independance)}\\
 &= k(x,y)
 \end{align*}
 Typical examples of sample path are shown bellow:
@@ -208,18 +208,35 @@ We can recognize here the conditional distribution of $Z_0 + Z_1(x) + Z_2(x)$ gi
 
 Consider a kriging model based on the design of experiments $X=(-0.2,0.2)$ and the vector of observations $Y=(-0.2,0.2)$. We will consider fixed values for the variance and length-scale parameters: $\sigma^2=1$ and $\theta=0.2$.
 \begin{enumerate}[label=Q\arabic*.]
-\item {[1 pt]} Use simple kriging equations with exponential covariance kernel to get
-  the prediction at \(x=0\). We recall the inversion formula for a $2 \times 2$ matrix:
-  \begin{equation}
-  \left[ \begin{array}{ccc}  a & b \\ b & a   \end{array} \right] ^{-1} = \frac{1}{a^2-b^2} \times \left[ \begin{array}{ccc}  a & -b \\ -b & a   \end{array} \right]
-  \end{equation}
-\item {[1 pt]} Evaluate the Expected Improvement criterion at \(x=0\). The figure bellow may be helpful.
-\item {[1 pt]} The same evaluation for a model based on a Gaussian kernel gives $EI(0) = 0.15$. Compare with the previous result and analyse.
-  \end{enumerate}
+\item The simple kriging equations give 
+\begin{align*}
+	m(x) &= k(x,X)k(X,X)^{-1}F\\
+	& = 
+	 \left[ \begin{array}{ccc} \sigma^2 e^{-1} \\ \sigma^2e^{-1} \end{array}\right]^T 
+	 \times \left[ \begin{array}{ccc}  \sigma^2 & \sigma^2e^{-2} \\ \sigma^2e^{-2} & \sigma^2   \end{array} \right] ^{-1} 
+	 \times \left[ \begin{array}{ccc} -0.2 \\ 0.2 \end{array} \right]\\
+	& = \frac{1}{1 - e^{-4}} \left[ \begin{array}{ccc} e^{-1} \\ e^{-1} \end{array}\right]^T
+	 \times \left[ \begin{array}{ccc}  1 & -e^{-2} \\ -e^{-2} & 1   \end{array} \right]
+	 \times \left[ \begin{array}{ccc} -0.2 \\ 0.2 \end{array} \right]\\
+	& = 0 
+\end{align*}
+In a similar fashion, we obtain:
+\begin{align*}
+	v(x) &= k(x,x) - k(x,X)k(X,X)^{-1}k(X,x) = \dots = 0.76 
+\end{align*}
+Note that the result $m(x)=0$ could also be obtained noticing the problem symmetry. 
 
-\begin{center}
-  \includegraphics[width=12cm]{figures/exo_optim.pdf}
-\end{center}
+\item The expression of the expected improvement is
+\begin{align*}
+	EI(x) = \sqrt{v(x)} (u(x) \Phi(u(x)) + \phi(u(x)))  \text{\qquad with } u(x) = \frac{\min(F) - m(x)}{\sqrt{v(x)}}
+\end{align*}
+In $x=0$, we thus have $u(0)= -0.2/0.87 = -0.23$. As a consequence, we have
+\begin{align*}
+	EI(0) = 0.87 \times (-0.23 \times \Phi(-0.23) + \phi(-0.23)) = 0.26
+\end{align*}
+
+\item The expected improvement is smaller when using a Gaussian kernel since the confidence intervals of the later model are mush smaller that the initial one.
+  \end{enumerate}
 
 \end{document}
 
